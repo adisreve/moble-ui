@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="editor.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    
+    <div class="ui-page-theme-b">
+
+    <div class="container">
+        <div id="form-output">
+            <label for="base-price">Base Price</label>
+            <input type="number" name="base-price" id="base-price">
+        </div>
+
+        <button class="btn btn-secondary mt-5 form-submit">Save Variants</button>
+        <button class="btn btn-secondary mt-5" id="btn-generate" disabled>Autogenerate</button>
+        <div id="autogenerate"></div>
+    </div>
+
+    <div class="container">
+        <div class="mt-5">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-bordered table-hover table-sortable" id="tab_logic">
+                    <thead>
+
+                        <th class="text-center" id="before">
+                            SKU
+                        </th>
+                        <th class="text-center">
+                            Inventory
+                        </th>
+                        <th class="text-center">
+                            Price
+                        </th>
+                    </thead>
+                    <tbody id="output">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <h4>JSON Output</h4>
+                    <textarea class="form-control" rows="6" id="json-output">
+                </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="//use.typekit.net/dqb1xaf.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <script src="index.js"></script>
+</body>
+
+</html>

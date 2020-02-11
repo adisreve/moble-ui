@@ -1,0 +1,25 @@
+
+.ui-mobile [data-role=page], .ui-mobile [data-role=dialog], .ui-page {
+  display:block;
+}
+
+.selectize-control.single .selectize-input.input-active, .selectize-input {
+  background: transparent;
+}
+
+.variants_table {
+  width:100%;
+}
+
+.variants_table th {
+  text-align:left;
+}
+
+.more-prices {
+  display:block;
+  padding:15px;
+}
+
+#inner-prices input {
+  display:block;
+}
