@@ -92,6 +92,36 @@ function capitalizeFirst(string) {
     return firstLetter + string.split('').splice(1).join('');
 }
 
+function productTags() {
+    const optionForm = document.querySelectorAll('.input_options');
+    let site_option_values = {};
+        
+    Array.from(optionForm).map(o => {
+        // let field = o.getAttribute('data-field');
+
+        // if(field == 'weight') {
+        //     field = 'grams';
+        // } else if (field == 'vendor') {
+        //     field = 'item_vendor';
+        // }
+        
+        const label = o.querySelector('label').innerText;
+        const options = o.querySelector('input').value;
+        console.log(label,options); 
+
+        if(label && options != '') {
+            site_option_values[label.toLowerCase()] = {
+                'label': label,
+                'options': options.split(',') 
+            }
+        }   
+    })
+
+    // document.querySelector('#json-output').value = JSON.stringify(site_option_values, null, "\t");
+
+    return JSON.stringify(site_option_values, null, "\t");
+}
+
 $(document).ready(async function () {
 
     // const res = await fetch('http://localhost:4400/product_data');
@@ -174,6 +204,9 @@ $(document).ready(async function () {
     document.querySelector('.form-submit').addEventListener('click', e => {
         e.preventDefault();
 
+        const cool = productTags();
+        document.querySelector('#site_options').innerHTML = productTags();
+
         // Remove any labels from before
         const labels = [];
         const theaders = document.querySelectorAll('.th-title');
@@ -197,7 +230,6 @@ $(document).ready(async function () {
             const inputField = input.querySelector('input');
             
             if(inputField.value != '') {
-                console.log(label, inputField.value.split(','));
                 labels.push(label);
                 productVariables.push(inputField.value.split(','));
             }
@@ -270,7 +302,7 @@ $(document).ready(async function () {
                     <tr id="row-${countCombination}" class="row-variables">
                     ${combination.map
                         (c => {
-                            return `<td data-field="variables" id="${countCombination}">${c}</td>`
+                            return `<td data-field="variables" id="${countCombination}" contenteditable="true">${c}</td>`
                         })
                     }
                 
