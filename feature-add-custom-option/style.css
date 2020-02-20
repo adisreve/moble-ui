@@ -44,3 +44,9 @@
     outline: 2px solid rgba(255,255,255,0.8);
     color:rgb(1, 116, 35);
   }
+
+  td[data-field="variables"][contenteditable]:focus {
+    padding:0;
+    width:auto;
+
+  }
