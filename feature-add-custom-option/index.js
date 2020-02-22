@@ -143,9 +143,9 @@
                     <td class="text-center">
                         <input type="number" name="price" value="${basePriceBtn.value}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                     </td>
-                    <!-- <td>
+                    <td style="display:none;"> 
                         <input type="checkbox" name="more-prices" class="ui-input-checkbox ui-body-inherit ui-corner-all ui-shadow-inset">
-                    </td> -->
+                    </td>
                     
                 </tr>  
                 `);
