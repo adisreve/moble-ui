@@ -78,8 +78,8 @@
 
     const median = function(data){
         const sum = data.reduce((a,b) => a + b, 0);
-        const arrMin = Math.max(...data);
-        const arrMax = Math.min(...data);
+        const arrMin = Math.min(...data);
+        const arrMax = Math.max(...data);
 
         const median = sum / data.length;
 
@@ -123,8 +123,15 @@
                 });
 
                 countCombination++;
+                $('#index-no').append(`
+
+                `)
+
                 $('#output').append(`
                     <tr id="row-${countCombination}" class="row-variables">
+                    <td class="text-center">
+                    ${countCombination}
+                    </td>
                     ${combination.map
                         ((c,i) => {
                             return `<td data-field="variables" data-option="${c}" data-label="${productLabels[i]}" id="${countCombination}" contenteditable="true">${c}</td>`
@@ -327,6 +334,16 @@
                 } 
             })
 
+            
+            if(!document.querySelector('#index-no')) {
+                const thNo = document.createElement('th');
+                thNo.innerText = 'No.';
+                thNo.id = 'index-no';
+                const thead = document.querySelector('table thead tr');
+                console.log(thead.childNodes[0]);
+                thead.insertBefore(thNo, thead.childNodes[0]);
+            }
+
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
 
@@ -345,6 +362,7 @@
         // Change data
             removeHeaders();
 
+
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.reverse().map((label, i) => {
                 if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
@@ -356,6 +374,15 @@
                     thead.insertBefore(th, thead.childNodes[0]);
                 } 
             })
+
+            if(!document.querySelector('#index-no')) {
+                const thNo = document.createElement('th');
+                thNo.innerText = 'No.';
+                thNo.id = 'index-no';
+                const thead = document.querySelector('table thead tr');
+                console.log(thead.childNodes[0]);
+                thead.insertBefore(thNo, thead.childNodes[0]);
+            }
 
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
