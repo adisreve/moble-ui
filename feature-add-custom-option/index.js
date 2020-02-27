@@ -230,14 +230,16 @@
             let curr = $(el).innerText;
 
             const currentField = $(el)[0].getAttribute('data-field');
-            var selectize = $(`div[data-field="${currentField}"] input`).selectize()[0].selectize;
-
-            // console.log($select);
-            if(newArr[currentField]) {
-                newArr[currentField].map(ee => {
-                    selectize.addOption({text: ee, value: ee});
-                    selectize.addItem(ee);
-                })
+            var $select = $(`div[data-field="${currentField}"] input`);
+            if($select) {
+                console.log($select);
+                var selectize = $select.selectize()[0].selectize
+                if(newArr[currentField]) {
+                    newArr[currentField].map(ee => {
+                        selectize.addOption({text: ee, value: ee});
+                        selectize.addItem(ee);
+                    })
+                }
             }
         })
     }
@@ -354,6 +356,8 @@
                         }
                     })
                 });
+
+                $('#tab_logic').DataTable();
             }, 0);
 
             document.querySelector('#btn-generate').addEventListener('click', e => {
@@ -648,7 +652,7 @@
 
         let dataValue = 0;
 
-        // : load data on document load
+        // load data on document load
         if(existing_data) {
             combinationsArr = Object.keys(existing_data.prices).map(el => {
                 return el.split('--')

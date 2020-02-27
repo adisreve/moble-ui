@@ -50,3 +50,7 @@
     width:auto;
 
   }
+
+  table.dataTable tbody tr {
+    background-color:initial;
+  }
