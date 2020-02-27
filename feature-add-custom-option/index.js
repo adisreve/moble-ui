@@ -32,6 +32,46 @@
 
     const base_price = null;
 
+    const existing_data = {
+        "columns": [
+            "colour",
+            "material"
+        ],
+        "prices": {
+            "Blue--Wood": "30",
+            "Blue--Plastic": "30",
+            "Blue--Metal": "30",
+            "Red--Wood": "30",
+            "Red--Plastic": "30",
+            "Red--Metal": "30",
+            "Green--Wood": "30",
+            "Green--Plastic": "30",
+            "Green--Metal": "30"
+        },
+        "skus": {
+            "Blue--Wood": "-",
+            "Blue--Plastic": "-",
+            "Blue--Metal": "-",
+            "Red--Wood": "-",
+            "Red--Plastic": "-",
+            "Red--Metal": "-",
+            "Green--Wood": "-",
+            "Green--Plastic": "-",
+            "Green--Metal": "-"
+        },
+        "qty": {
+            "Blue--Wood": "",
+            "Blue--Plastic": "",
+            "Blue--Metal": "",
+            "Red--Wood": "",
+            "Red--Plastic": "",
+            "Red--Metal": "",
+            "Green--Wood": "",
+            "Green--Plastic": "",
+            "Green--Metal": ""
+        }
+    }
+
     // Define state/data
 
     const data = {
@@ -100,33 +140,145 @@
         return output;
     }
 
-    const renderCombinations = function(productVariables) {
+    const editableTags = function() {
+        document.querySelectorAll('td[data-field="variables"]').forEach(el => {
+            let curr = $(el)[0].innerText;
 
-        // Create all possible combinations and store it here
-        const combinationsArr = combinations(productVariables);
-        const productLabels = productVariables.map(el => el.label.toLowerCase());
+            $(el).on("focus", function(e) {
+                curr = $(this)[0].innerText;
+            })
+
+            $(el).focusout(function(e) {
+                e.preventDefault();
+
+                const currentLabel = $(this)[0].getAttribute('data-label');
+                const currentOption = $(this)[0].getAttribute('data-option');
+
+                var $select = $(`div[data-field="${currentLabel}"] input`);
+                var selectize = $select[0].selectize;
+
+                var value = selectize.getValue().split(',');
+                var indexNo = value.findIndex(i => i === curr);
+
+                if(indexNo != -1) {
+                    selectize.setCaret(indexNo);
+                    selectize.removeItem(curr);
+                
+                    selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
+                    selectize.addItem($(el)[0].innerText);
+
+                    selectize.setCaret(selectize.items.length)
+                }
+                
+                document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
+                    el.innerText = this.innerText;
+                    el.setAttribute('data-option', this.innerText);
+                })
+            })
+
+            $(el).on("keydown", function(e) {
+
+                var key = e.keyCode || e.charCode;  // ie||others
+                // if enter is pressed
+                if(key == 13) {
+                    e.preventDefault();
+
+                    const currentLabel = $(this)[0].getAttribute('data-label');
+                    const currentOption = $(this)[0].getAttribute('data-option');
+
+                    var $select = $(`div[data-field="${currentLabel}"] input`);
+                    var selectize = $select[0].selectize;
+
+                    var value = selectize.getValue().split(',');
+                    var indexNo = value.findIndex(i => i === curr);
+
+                    if(indexNo != -1) {
+                        selectize.setCaret(indexNo);
+                        selectize.removeItem(curr);
+                    
+                        selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
+                        selectize.addItem($(el)[0].innerText);
+
+                        selectize.setCaret(selectize.items.length)
+                    }
+                    
+                    document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
+                        el.innerText = this.innerText;
+                        el.setAttribute('data-option', this.innerText);
+                    })
+                } 
+            })
+        });
+    }
+
+    const renderTags = function(arr) {
+        // map array with existing_data.columns [0] = column value 0 [1] means column value 1
+
+        let newArr = {};
+
+        existing_data.columns.map((e,i) => {
+            newArr[e] = []
+
+            arr.map((el, index) => {
+                if(newArr[e].indexOf(el[i]) == -1) {
+                    newArr[e].push(el[i])
+                }
+            })
+        });
+        
+        document.querySelectorAll('.input_options div').forEach(el => {
+            let curr = $(el).innerText;
+
+            const currentField = $(el)[0].getAttribute('data-field');
+            var selectize = $(`div[data-field="${currentField}"] input`).selectize()[0].selectize;
+
+            // console.log($select);
+            if(newArr[currentField]) {
+                newArr[currentField].map(ee => {
+                    selectize.addOption({text: ee, value: ee});
+                    selectize.addItem(ee);
+                })
+            }
+        })
+    }
+
+    const renderCombinations = function(productVariables, onload = false) {        
+
         const output = document.querySelector('#output');
         const basePriceBtn = document.querySelector('#base-price');
-
-        document.querySelector('#combinations-count').innerText = 'Number of combinations: ' + combinationsArr.length;
 
         // Empty the HTML if there's data
         output.innerHTML = '';
 
+        let combinationsArr = [];
+        let productLabels = []
+
+    
+        if(onload == true) {
+            console.log(productVariables);
+            combinationsArr = productVariables;
+
+            productLabels = existing_data.columns.map(col => col);
+        } else {
+            combinationsArr = combinations(productVariables);
+            productLabels = productVariables.map(el => el.label.toLowerCase());
+        }
+
+        console.log(combinationsArr);
+
+        // Show number of all combinations
+        document.querySelector('#combinations-count').innerText = 'Number of combinations: ' + combinationsArr.length;
+
         let countCombination = 0;
+        
         if (combinationsArr.length > 1) {
             combinationsArr.map(c => {
-
                 let combination = [];
                 c.forEach(newEl => {
                     combination.push(newEl);
                 });
 
                 countCombination++;
-                $('#index-no').append(`
-
-                `)
-
                 $('#output').append(`
                     <tr id="row-${countCombination}" class="row-variables">
                     <td class="text-center">
@@ -189,14 +341,13 @@
             })
 
             let varCount = 0;
+
             setTimeout(() => {
                 document.querySelectorAll('input[name="more-prices"]').forEach(prices => {
-
                     prices.addEventListener('change', function (e) {
                         if (this.checked) {
                             // Count foreach iterations and use them in assigning id's
                             varCount++;
-
                             $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).hide().slideDown();
                         } else {
                             $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).show().slideUp();
@@ -256,7 +407,7 @@
                 })
 
                 const finalJson = {
-                    // columns: data_values,
+                    columns: productLabels,
                     prices: toJSON(obj, prices),
                     skus: toJSON(obj, skus),
                     qty: toJSON(obj, inventories)
@@ -284,6 +435,7 @@
             const currComb = combination.join('--');
             variables[currComb] = values[index];
         })
+
         return variables;
     }
 
@@ -453,7 +605,7 @@
         // Mock data response (change to json api url)
         const responseData = options;
         const formOutput = document.querySelector('#form-output');
-        const data_values = Object.keys(responseData);
+        // const data_values = Object.keys(responseData);
 
         // Define index for options map
         let tempValue = 0;
@@ -495,6 +647,25 @@
         });
 
         let dataValue = 0;
+
+        // : load data on document load
+        if(existing_data) {
+            combinationsArr = Object.keys(existing_data.prices).map(el => {
+                return el.split('--')
+            })
+
+            document.querySelector('#tab_logic').style.display = 'table';
+
+            console.log(existing_data.columns, data.labels);
+            // data.labels.push(existing_data.columns);
+            renderHeaders();
+            // Passing true as parameters should we load already existing data
+            renderCombinations(combinationsArr, true);
+
+            renderTags(combinationsArr);
+
+            editableTags();
+        } 
 
         // New custom option event listener
         document.querySelector('#btn-add-new').addEventListener('click', e => {
@@ -546,7 +717,6 @@
         document.querySelector('.form-submit').addEventListener('click', e => {
             e.preventDefault();
 
-        
             // Remove any labels from before
             data.labels = [];
 
@@ -574,91 +744,13 @@
                 }
             })
 
-            // Object.entries(data).map(val => {
-            //     // Checking if the values have entries
-            //     if(document.querySelector(`input[name="${val[0]}"`).value != '') {
-            //         // Pushing the labels for listing
-            //         labels.push(val[1].label || capitalizeFirst(val[0]));
-
-            //         // Pushing product variables 
-            //         productVariables.push(document.querySelector(`input[name="${val[0]}"]`).value.split(','));
-            //     }
-            // })
-
             if(productVariables.length > 0) {
                 renderHeaders();
 
                 // Render combinations
                 renderCombinations(productVariables);
         
-                document.querySelectorAll('td[data-field="variables"]').forEach(el => {
-                    let curr = $(el)[0].innerText;
-
-                    $(el).on("focus", function(e) {
-                        curr = $(this)[0].innerText;
-                    })
-
-                    $(el).focusout(function(e) {
-                        e.preventDefault();
-    
-                        const currentLabel = $(this)[0].getAttribute('data-label');
-                        const currentOption = $(this)[0].getAttribute('data-option');
-
-                        var $select = $(`div[data-field="${currentLabel}"] input`);
-                        var selectize = $select[0].selectize;
-
-                        var value = selectize.getValue().split(',');
-                        var indexNo = value.findIndex(i => i === curr);
-
-                        if(indexNo != -1) {
-                            selectize.setCaret(indexNo);
-                            selectize.removeItem(curr);
-                        
-                            selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
-                            selectize.addItem($(el)[0].innerText);
-
-                            selectize.setCaret(selectize.items.length)
-                        }
-                        
-                        document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
-                            el.innerText = this.innerText;
-                            el.setAttribute('data-option', this.innerText);
-                        })
-                    })
-
-                    $(el).on("keydown", function(e) {
-        
-                        var key = e.keyCode || e.charCode;  // ie||others
-                        // if enter is pressed
-                        if(key == 13) {
-                            e.preventDefault();
-        
-                            const currentLabel = $(this)[0].getAttribute('data-label');
-                            const currentOption = $(this)[0].getAttribute('data-option');
-
-                            var $select = $(`div[data-field="${currentLabel}"] input`);
-                            var selectize = $select[0].selectize;
-
-                            var value = selectize.getValue().split(',');
-                            var indexNo = value.findIndex(i => i === curr);
-
-                            if(indexNo != -1) {
-                                selectize.setCaret(indexNo);
-                                selectize.removeItem(curr);
-                            
-                                selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
-                                selectize.addItem($(el)[0].innerText);
-
-                                selectize.setCaret(selectize.items.length)
-                            }
-                            
-                            document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
-                                el.innerText = this.innerText;
-                                el.setAttribute('data-option', this.innerText);
-                            })
-                        } 
-                    })
-                });
+                editableTags();
             }
 
             console.log(median(data.test_cases));
