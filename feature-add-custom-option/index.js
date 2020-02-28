@@ -80,7 +80,8 @@
         standard_labels: [],
         labels: [],
         custom: [],
-        standard: []
+        standard: [],
+        selectizeArr: []
     }
 
     const combinations = function(array) {
@@ -138,6 +139,57 @@
         }, {}))
 
         return output;
+    }
+
+    const toJSON = function(arr, values) {
+        const variables = {};
+
+        arr.map((el, index) => {
+            const combination = [];
+
+            el.forEach(newEl => {
+                combination.push(newEl);
+            });
+            const currComb = combination.join('--');
+            variables[currComb] = values[index];
+        })
+
+        return variables;
+    }
+
+    const renderTags = function(arr, selectizeArr) {
+        // map array with existing_data.columns [0] = column value 0 [1] means column value 1
+
+        let newArr = {};
+
+        existing_data.columns.map((e,i) => {
+            newArr[e] = []
+
+            arr.map((el, index) => {
+                if(newArr[e].indexOf(el[i]) == -1) {
+                    newArr[e].push(el[i])
+                }
+            })
+        });
+
+
+        $('.input_options > div').each(function () {
+
+            const currentField = $(this)[0].getAttribute('data-field');
+            var $select = $(`div[data-field="${currentField}"] input`);
+
+            if($select) {
+                var selectize = $select[0].selectize;
+
+                if(newArr[currentField]) {
+                    newArr[currentField].map(ee => {
+                        selectize.addOption({text: ee, value: ee});
+                        selectize.addItem(ee);
+                        selectize.refreshItems();
+                    })
+                }
+            }
+        })
     }
 
     const editableTags = function() {
@@ -211,39 +263,6 @@
         });
     }
 
-    const renderTags = function(arr) {
-        // map array with existing_data.columns [0] = column value 0 [1] means column value 1
-
-        let newArr = {};
-
-        existing_data.columns.map((e,i) => {
-            newArr[e] = []
-
-            arr.map((el, index) => {
-                if(newArr[e].indexOf(el[i]) == -1) {
-                    newArr[e].push(el[i])
-                }
-            })
-        });
-        
-        document.querySelectorAll('.input_options div').forEach(el => {
-            let curr = $(el).innerText;
-
-            const currentField = $(el)[0].getAttribute('data-field');
-            var $select = $(`div[data-field="${currentField}"] input`);
-            if($select) {
-                console.log($select);
-                var selectize = $select.selectize()[0].selectize
-                if(newArr[currentField]) {
-                    newArr[currentField].map(ee => {
-                        selectize.addOption({text: ee, value: ee});
-                        selectize.addItem(ee);
-                    })
-                }
-            }
-        })
-    }
-
     const renderCombinations = function(productVariables, onload = false) {        
 
         const output = document.querySelector('#output');
@@ -255,18 +274,13 @@
         let combinationsArr = [];
         let productLabels = []
 
-    
         if(onload == true) {
-            console.log(productVariables);
             combinationsArr = productVariables;
-
             productLabels = existing_data.columns.map(col => col);
         } else {
             combinationsArr = combinations(productVariables);
             productLabels = productVariables.map(el => el.label.toLowerCase());
         }
-
-        console.log(combinationsArr);
 
         // Show number of all combinations
         document.querySelector('#combinations-count').innerText = 'Number of combinations: ' + combinationsArr.length;
@@ -280,12 +294,14 @@
                     combination.push(newEl);
                 });
 
+                console.log(c);
+
                 countCombination++;
                 $('#output').append(`
-                    <tr id="row-${countCombination}" class="row-variables">
-                    <td class="text-center">
-                    ${countCombination}
-                    </td>
+                    <tr id="row-${countCombination}" data-row-abbreviation="${c.join('--')}" class="row-variables">
+                        <td class="text-center">
+                            ${countCombination}
+                        </td>
                     ${combination.map
                         ((c,i) => {
                             return `<td data-field="variables" data-option="${c}" data-label="${productLabels[i]}" id="${countCombination}" contenteditable="true">${c}</td>`
@@ -304,37 +320,37 @@
                     <td class="text-center">
                         <input type="number" name="price" value="${basePriceBtn.value}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                     </td>
-                    <td style="display:none;"> 
+                    <!-- <td style="display:none;"> 
                         <input type="checkbox" name="more-prices" class="ui-input-checkbox ui-body-inherit ui-corner-all ui-shadow-inset">
-                    </td>
+                    </td> -->
                     
                 </tr>  
                 `);
 
-                const priceRow = document.createElement('tr');
-                const priceData = document.createElement('td');
-                const priceDiv = document.createElement('div');
-                priceDiv.id = 'inner-prices';
-                priceDiv.style.display = 'none';
-                priceData.appendChild(priceDiv);
-                for (i = 0; i < productVariables.length + 2; i++) {
-                    priceRow.appendChild(document.createElement('td'));
-                }
+                // const priceRow = document.createElement('tr');
+                // const priceData = document.createElement('td');
+                // const priceDiv = document.createElement('div');
+                // priceDiv.id = 'inner-prices';
+                // priceDiv.style.display = 'none';
+                // priceData.appendChild(priceDiv);
+                // for (i = 0; i < productVariables.length + 2; i++) {
+                //     priceRow.appendChild(document.createElement('td'));
+                // }
 
-                priceRow.setAttribute('data-row', countCombination);
-                for (let i = 2; i < 11; i++) {
-                    let tempInput = document.createElement('input');
-                    tempInput.setAttribute('placeholder', `Price ${i}`);
-                    tempInput.className = 'ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset';
-                    tempInput.name = `price_${i}`;
-                    tempInput.type = 'number';
-                    // $(tempInput).hide();
+                // priceRow.setAttribute('data-row', countCombination);
+                // for (let i = 2; i < 11; i++) {
+                //     let tempInput = document.createElement('input');
+                //     tempInput.setAttribute('placeholder', `Price ${i}`);
+                //     tempInput.className = 'ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset';
+                //     tempInput.name = `price_${i}`;
+                //     tempInput.type = 'number';
+                //     // $(tempInput).hide();
 
-                    priceDiv.appendChild(tempInput);
-                }
-                priceRow.appendChild(priceData);
+                //     priceDiv.appendChild(tempInput);
+                // }
+                // priceRow.appendChild(priceData);
 
-                document.getElementById('output').appendChild(priceRow);
+                // document.getElementById('output').appendChild(priceRow);
 
                 const btnGenerate = document.querySelector('#btn-generate');
                 if (btnGenerate.hasAttribute('disabled')) {
@@ -356,9 +372,10 @@
                         }
                     })
                 });
-
-                $('#tab_logic').DataTable();
+                
             }, 0);
+
+
 
             document.querySelector('#btn-generate').addEventListener('click', e => {
                 e.preventDefault();
@@ -427,22 +444,6 @@
                     
     }
 
-    const toJSON = function(arr, values) {
-        const variables = {};
-
-        arr.map((el, index) => {
-            const combination = [];
-
-            el.forEach(newEl => {
-                combination.push(newEl);
-            });
-            const currComb = combination.join('--');
-            variables[currComb] = values[index];
-        })
-
-        return variables;
-    }
-
     const showMorePrices = function() {
 
     }
@@ -477,6 +478,8 @@
 
             // Change data
             removeHeaders();
+
+            console.log(data.labels);
 
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.map((label, i) => {
@@ -517,8 +520,7 @@
         } else {
         // Change data
             removeHeaders();
-
-
+            console.log(data.labels);
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.reverse().map((label, i) => {
                 if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
@@ -536,7 +538,6 @@
                 thNo.innerText = 'No.';
                 thNo.id = 'index-no';
                 const thead = document.querySelector('table thead tr');
-                console.log(thead.childNodes[0]);
                 thead.insertBefore(thNo, thead.childNodes[0]);
             }
 
@@ -613,7 +614,7 @@
 
         // Define index for options map
         let tempValue = 0;
-        const selectizeArr = [];
+        // data.selectizeArr = [];
 
         // Map through options and generate the fields dynamically
         Object.entries(responseData).map((options,i) => {
@@ -625,7 +626,6 @@
                 </div>
             `;
             
-
             let newOptions;
             if(!Object.entries(options[1]).length == 0) {
                 newOptions = options[1].options.map(el => {
@@ -638,7 +638,7 @@
             // Add selectize tags to every iteration
             // Set timeout is waiting for element to initialize
             setTimeout(() => {
-                selectizeArr.push($(`input[name="${options[0]}"`).selectize({
+                data.selectizeArr.push($(`input[name="${options[0]}"`).selectize({
                     delimiter: ',',
                     options: newOptions,
                     valueField: 'value',
@@ -647,28 +647,33 @@
                     persist: false,
                     create: true
                 })[0].selectize)
-            }, 1)
+            }, 0)
+
         });
 
         let dataValue = 0;
 
         // load data on document load
         if(existing_data) {
-            combinationsArr = Object.keys(existing_data.prices).map(el => {
-                return el.split('--')
-            })
 
-            document.querySelector('#tab_logic').style.display = 'table';
 
-            console.log(existing_data.columns, data.labels);
-            // data.labels.push(existing_data.columns);
-            renderHeaders();
-            // Passing true as parameters should we load already existing data
-            renderCombinations(combinationsArr, true);
+            setTimeout(() => {
+                combinationsArr = Object.keys(existing_data.prices).map(el => {
+                    return el.split('--')
+                })
+    
+                document.querySelector('#tab_logic').style.display = 'table';
+                data.labels = existing_data.columns.map(el => el.toUpperCase());
 
-            renderTags(combinationsArr);
+                renderHeaders();
+                // Passing true as parameters should we load already existing data
+                renderCombinations(combinationsArr, true);
 
-            editableTags();
+                renderTags(combinationsArr, data.selectizeArr);
+                editableTags();
+
+                $('#tab_logic').DataTable();
+            }, 0)
         } 
 
         // New custom option event listener
@@ -685,7 +690,7 @@
             `)
 
             setTimeout(() => {
-                selectizeArr.push($(`div[data-value="${dataValue}"] input`).selectize({
+                data.selectizeArr.push($(`div[data-value="${dataValue}"] input`).selectize({
                     delimiter: ',',
                     create: true,
                     loadThrottle: 100
@@ -726,6 +731,7 @@
 
             // Show table on submit
             document.querySelector('#tab_logic').style.display = 'table';
+            // $('#tab_logic').DataTable();
 
             // Declare empty variables where we store variables for table show
             const productVariables = [];
@@ -735,7 +741,7 @@
                 let label = input.querySelector('label').innerText;
                 label = label.replace(/\s/gi, '-');
 
-                const newInputField = selectizeArr[index].items;
+                const newInputField = data.selectizeArr[index].items;
                 const inputField = input.querySelector('input');
                 // console.log('inptufield::: ' + JSON.stringify(inputField));
                 

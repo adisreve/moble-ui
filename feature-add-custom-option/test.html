@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css">
+
+    <link rel="stylesheet" href="../editor.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="ui-mobile-viewport  ui-overlay-b pace-done pace-done">
+
+<table class="variants_table dataTable" id="tab_logic" style="display: table;">
+    <thead>
+            <th class="th-title header-colour" data-header="colour">COLOUR</th>
+            <th class="th-title header-material" data-header="material">MATERIAL</th>
+            <th id="index-no">No.</th>
+            <th id="before">
+                QR
+            </th>
+            <th>
+                SKU
+            </th>
+            <th>
+                Inventory
+            </th>
+            <th>
+                Price
+            </th>
+    </thead>
+    <tbody id="output">
+        <tr id="row-1" data-row-abbreviation="Blue--Wood" class="row-variables">
+            <td class="text-center">
+                1
+            </td>
+            <td data-field="variables" data-option="Blue" data-label="colour" id="1" contenteditable="true">Blue</td>
+            <td data-field="variables" data-option="Wood" data-label="material" id="1" contenteditable="true">Wood</td>
+
+            <td class="text-center">
+                <a href="https://chart.googleapis.com/chart?chs=547x547&amp;cht=qr&amp;chl=http://producturl.com/Blue,Wood&amp;choe=UTF-8}"
+                    class="qr-icon" target="_blank"><i class="fa fa-qrcode"></i></a>
+            </td>
+            <td class="text-center">
+                <input type="text" name="sku" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="text" name="inventory" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="number" name="price" value=""
+                    class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+
+        </tr>
+        <tr id="row-2" data-row-abbreviation="Blue--Plastic" class="row-variables">
+            <td class="text-center">
+                2
+            </td>
+            <td data-field="variables" data-option="Blue" data-label="colour" id="2" contenteditable="true">Blue</td>
+            <td data-field="variables" data-option="Plastic" data-label="material" id="2" contenteditable="true">Plastic
+            </td>
+
+            <td class="text-center">
+                <a href="https://chart.googleapis.com/chart?chs=547x547&amp;cht=qr&amp;chl=http://producturl.com/Blue,Plastic&amp;choe=UTF-8}"
+                    class="qr-icon" target="_blank"><i class="fa fa-qrcode"></i></a>
+            </td>
+            <td class="text-center">
+                <input type="text" name="sku" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="text" name="inventory" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="number" name="price" value=""
+                    class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+
+        </tr>
+        <tr id="row-3" data-row-abbreviation="Blue--Metal" class="row-variables">
+            <td class="text-center">
+                3
+            </td>
+            <td data-field="variables" data-option="Blue" data-label="colour" id="3" contenteditable="true">Blue</td>
+            <td data-field="variables" data-option="Metal" data-label="material" id="3" contenteditable="true">Metal
+            </td>
+
+            <td class="text-center">
+                <a href="https://chart.googleapis.com/chart?chs=547x547&amp;cht=qr&amp;chl=http://producturl.com/Blue,Metal&amp;choe=UTF-8}"
+                    class="qr-icon" target="_blank"><i class="fa fa-qrcode"></i></a>
+            </td>
+            <td class="text-center">
+                <input type="text" name="sku" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="text" name="inventory" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="number" name="price" value=""
+                    class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+
+        </tr>
+        <tr id="row-4" data-row-abbreviation="Red--Wood" class="row-variables">
+            <td class="text-center">
+                4
+            </td>
+            <td data-field="variables" data-option="Red" data-label="colour" id="4" contenteditable="true">Red</td>
+            <td data-field="variables" data-option="Wood" data-label="material" id="4" contenteditable="true">Wood</td>
+
+            <td class="text-center">
+                <a href="https://chart.googleapis.com/chart?chs=547x547&amp;cht=qr&amp;chl=http://producturl.com/Red,Wood&amp;choe=UTF-8}"
+                    class="qr-icon" target="_blank"><i class="fa fa-qrcode"></i></a>
+            </td>
+            <td class="text-center">
+                <input type="text" name="sku" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="text" name="inventory" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+            <td class="text-center">
+                <input type="number" name="price" value=""
+                    class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            </td>
+
+        </tr>
+
+    </tbody>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="//use.typekit.net/dqb1xaf.js"></script>
+    <script type="text/javascript">
+        try {
+            Typekit.load();
+        } catch (e) {}
+    </script>
+
+</body>
+</table>
