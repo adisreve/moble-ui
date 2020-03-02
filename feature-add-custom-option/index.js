@@ -3,6 +3,9 @@
 
     // simulate mock data from api that defines option and option values
 
+    // Define product base price
+    const base_price = null;
+
     // Mock options data
     const options = {
         'colour': {
@@ -30,8 +33,7 @@
         'finish': {}
     };
 
-    const base_price = null;
-
+    // Existing product data
     const existing_data = {
         "columns": [
             "colour",
@@ -73,7 +75,6 @@
     }
 
     // Define state/data
-
     const data = {
         test_cases: [],
         custom_labels: [],
@@ -81,7 +82,8 @@
         labels: [],
         custom: [],
         standard: [],
-        selectizeArr: []
+        selectizeArr: [],
+        productVariables: []
     }
 
     const combinations = function(array) {
@@ -221,6 +223,37 @@
 
                     selectize.setCaret(selectize.items.length)
                 }
+
+                // Declare empty variables where we store variables for table show
+                data.productVariables = [];
+
+                mapDataFromInput();
+
+                if(data.productVariables.length > 0) {
+                    renderHeaders();
+
+                    // Render combinations
+                    renderCombinations(data.productVariables);
+
+                    $('#tab_logic').DataTable().destroy;
+                    // datatable.destroy();
+                    $('#tab_logic').DataTable({
+                        "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+                        "iDisplayLength": 100,
+                        "columns": [
+                            null,
+                            ...data.labels.map(el => null),
+                            null,
+                            { "orderDataType": "dom-text-numeric" },
+                            { "orderDataType": "dom-text-numeric" },
+                            { "orderDataType": "dom-text-numeric" }
+                        ]
+                    });
+                    // datatable.rows.add(productVariables); // Add new data
+                    // datatable.columns.adjust().draw(); // Redraw the DataTable
+            
+                    editableTags();
+                }
                 
                 document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
                     el.innerText = this.innerText;
@@ -253,14 +286,61 @@
 
                         selectize.setCaret(selectize.items.length)
                     }
+
+                    // Declare empty variables where we store variables for table show
+                    data.productVariables = [];
+
+                    mapDataFromInput();
+
+                    if(data.productVariables.length > 0) {
+                        renderHeaders();
+
+                        // Render combinations
+                        renderCombinations(data.productVariables);
+
+                        $('#tab_logic').DataTable().destroy;
+                        // datatable.destroy();
+                        $('#tab_logic').DataTable({
+                            "columns": [
+                                null,
+                                null,
+                                null,
+                                { "orderDataType": "dom-text", type: 'string' }
+                            ]
+                        });
+                        // datatable.rows.add(productVariables); // Add new data
+                        // datatable.columns.adjust().draw(); // Redraw the DataTable
+                
+                        editableTags();
+                    }
                     
-                    document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
-                        el.innerText = this.innerText;
-                        el.setAttribute('data-option', this.innerText);
-                    })
+                    // document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
+                    //     el.innerText = this.innerText;
+                    //     el.setAttribute('data-option', this.innerText);
+                    // })
                 } 
             })
         });
+    }
+
+    const mapDataFromInput = function() {
+        Array.from(document.querySelectorAll('.input_options')).map((input, index) => {
+                
+            let label = input.querySelector('label').innerText;
+            label = label.replace(/\s/gi, '-');
+
+            const newInputField = data.selectizeArr[index].items;
+            const inputField = input.querySelector('input');
+            // console.log('inptufield::: ' + JSON.stringify(inputField));
+            
+            if(inputField.value != '') {
+                data.labels.push(label);
+                data.productVariables.push({
+                    label,
+                    options: newInputField 
+                });
+            }
+        })
     }
 
     const renderCombinations = function(productVariables, onload = false) {        
@@ -293,8 +373,6 @@
                 c.forEach(newEl => {
                     combination.push(newEl);
                 });
-
-                console.log(c);
 
                 countCombination++;
                 $('#output').append(`
@@ -375,8 +453,6 @@
                 
             }, 0);
 
-
-
             document.querySelector('#btn-generate').addEventListener('click', e => {
                 e.preventDefault();
                 document.querySelectorAll('input[name="sku"]').forEach((el, index) => {
@@ -444,10 +520,6 @@
                     
     }
 
-    const showMorePrices = function() {
-
-    }
-
     const capitalizeFirst = function(string) {
         const firstLetter = string.split('')[0].toUpperCase();
         return firstLetter + string.split('').splice(1).join('');
@@ -478,8 +550,6 @@
 
             // Change data
             removeHeaders();
-
-            console.log(data.labels);
 
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.map((label, i) => {
@@ -520,7 +590,7 @@
         } else {
         // Change data
             removeHeaders();
-            console.log(data.labels);
+
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.reverse().map((label, i) => {
                 if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
@@ -603,6 +673,20 @@
         return JSON.stringify(site_option_values, null, "\t");
     }
 
+    $.fn.dataTable.ext.order['dom-text'] = function  ( settings, col ) {
+        return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
+            return $('input', td).val();
+        } );
+    }
+
+    /* Create an array with the values of all the input boxes in a column, parsed as numbers */
+    $.fn.dataTable.ext.order['dom-text-numeric'] = function  ( settings, col ) {
+        return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
+            return $('input', td).val() * 1;
+        } );
+    }
+ 
+
     $(document).ready(async function () {
         // const res = await fetch('http://localhost:4400/product_data');
         // const data = await res.json();
@@ -614,7 +698,6 @@
 
         // Define index for options map
         let tempValue = 0;
-        // data.selectizeArr = [];
 
         // Map through options and generate the fields dynamically
         Object.entries(responseData).map((options,i) => {
@@ -672,7 +755,18 @@
                 renderTags(combinationsArr, data.selectizeArr);
                 editableTags();
 
-                $('#tab_logic').DataTable();
+                $('#tab_logic').DataTable({
+                    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+                    "iDisplayLength": 100,
+                    "columns": [
+                        null,
+                        ...data.labels.map(el => null),
+                        null,
+                        { "orderDataType": "dom-text-numeric" },
+                        { "orderDataType": "dom-text-numeric" },
+                        { "orderDataType": "dom-text-numeric" }
+                    ]
+                });
             }, 0)
         } 
 
@@ -734,31 +828,32 @@
             // $('#tab_logic').DataTable();
 
             // Declare empty variables where we store variables for table show
-            const productVariables = [];
+            data.productVariables = [];
 
-            Array.from(document.querySelectorAll('.input_options')).map((input, index) => {
-                
-                let label = input.querySelector('label').innerText;
-                label = label.replace(/\s/gi, '-');
+            mapDataFromInput();
 
-                const newInputField = data.selectizeArr[index].items;
-                const inputField = input.querySelector('input');
-                // console.log('inptufield::: ' + JSON.stringify(inputField));
-                
-                if(inputField.value != '') {
-                    data.labels.push(label);
-                    productVariables.push({
-                        label,
-                        options: newInputField 
-                    });
-                }
-            })
-
-            if(productVariables.length > 0) {
+            if(data.productVariables.length > 0) {
                 renderHeaders();
 
                 // Render combinations
-                renderCombinations(productVariables);
+                renderCombinations(data.productVariables);
+
+                $('#tab_logic').DataTable().destroy;
+                // datatable.destroy();
+                $('#tab_logic').DataTable({
+                    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+                    "iDisplayLength": 100,
+                    "columns": [
+                        null,
+                        ...data.labels.map(el => null),
+                        null,
+                        { "orderDataType": "dom-text-numeric" },
+                        { "orderDataType": "dom-text-numeric" },
+                        { "orderDataType": "dom-text-numeric" }
+                    ]
+                });
+                // datatable.rows.add(productVariables); // Add new data
+                // datatable.columns.adjust().draw(); // Redraw the DataTable
         
                 editableTags();
             }
