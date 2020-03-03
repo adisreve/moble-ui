@@ -436,6 +436,8 @@
                 }
             })
 
+            output.innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
+
             let varCount = 0;
 
             setTimeout(() => {
@@ -460,8 +462,6 @@
                 })
             })
 
-            output.innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
-
             document.querySelector('#submit-prices').addEventListener('click', e => {
 
                 document.querySelector('#site_options').innerHTML = productTags();
@@ -483,19 +483,19 @@
                     const inventory = row.querySelector('input[name="inventory"]').value;
                     let price;
                     let newObj = {};
-                    if (row.querySelector('input[name="more-prices"]').checked) {
-                        let it = 0;
-                        newObj['price_1'] = row.querySelector('input[name="price"]').value;
-                        price = Array.from(row.nextElementSibling.querySelectorAll('#inner-prices input')).map(el => {
-                            it++;
-                            if (el.value != null && el.value != '') {
-                                newObj['price_' + (it + 1)] = el.value;
-                            }
-                        })
-                        price = newObj;
-                    } else {
+                    // if (row.querySelector('input[name="more-prices"]').checked) {
+                    //     let it = 0;
+                    //     newObj['price_1'] = row.querySelector('input[name="price"]').value;
+                    //     price = Array.from(row.nextElementSibling.querySelectorAll('#inner-prices input')).map(el => {
+                    //         it++;
+                    //         if (el.value != null && el.value != '') {
+                    //             newObj['price_' + (it + 1)] = el.value;
+                    //         }
+                    //     })
+                    //     price = newObj;
+                    // } else {
                         price = row.querySelector('input[name="price"]').value;
-                    }
+                    // }
 
                     obj.push(allVariables);
                     prices.push(price || base_price);
@@ -756,7 +756,7 @@
                 editableTags();
 
                 $('#tab_logic').DataTable({
-                    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+                    "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
                     "iDisplayLength": 100,
                     "columns": [
                         null,
