@@ -54,3 +54,15 @@
   table.dataTable tbody tr {
     background-color:initial;
   }
+
+  input.ui-input-text.ui-body-inherit.ui-corner-all.ui-shadow-inset {
+    width: 100%;
+  }
+
+  /* input.ui-input-text.ui-body-inherit.ui-corner-all.ui-shadow-inset[name="inventory"] {
+    width:50%;
+  } */
+  
+  th#inventory {
+    width:12%!important;
+  }

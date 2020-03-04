@@ -230,29 +230,31 @@
                 mapDataFromInput();
 
                 if(data.productVariables.length > 0) {
+                    // $('#tab_logic').DataTable().clear().destroy();
+                        
                     renderHeaders();
-
                     // Render combinations
                     renderCombinations(data.productVariables);
 
-                    $('#tab_logic').DataTable().destroy;
+                    editableTags();
+                
                     // datatable.destroy();
-                    $('#tab_logic').DataTable({
-                        "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
-                        "iDisplayLength": 100,
-                        "columns": [
-                            null,
-                            ...data.labels.map(el => null),
-                            null,
-                            { "orderDataType": "dom-text-numeric" },
-                            { "orderDataType": "dom-text-numeric" },
-                            { "orderDataType": "dom-text-numeric" }
-                        ]
-                    });
+                    // $('#tab_logic').DataTable({
+                    //     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                    //     "iDisplayLength": 500,
+                    //     "columns": [
+                    //         null,
+                    //         ...data.labels.map(el => null),
+                    //         null,
+                    //         { "orderDataType": "dom-text-numeric" },
+                    //         { "orderDataType": "dom-text-numeric" },
+                    //         { "orderDataType": "dom-text-numeric" }
+                    //     ]
+                    // });
                     // datatable.rows.add(productVariables); // Add new data
                     // datatable.columns.adjust().draw(); // Redraw the DataTable
             
-                    editableTags();
+
                 }
                 
                 document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
@@ -293,25 +295,30 @@
                     mapDataFromInput();
 
                     if(data.productVariables.length > 0) {
-                        renderHeaders();
+                        $('#tab_logic').DataTable().clear().destroy();
 
+                        renderHeaders();
                         // Render combinations
                         renderCombinations(data.productVariables);
 
-                        $('#tab_logic').DataTable().destroy;
-                        // datatable.destroy();
+                        editableTags();
+                
                         $('#tab_logic').DataTable({
+                            "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                            "iDisplayLength": 500,
                             "columns": [
                                 null,
+                                ...data.labels.map(el => null),
                                 null,
-                                null,
-                                { "orderDataType": "dom-text", type: 'string' }
+                                { "orderDataType": "dom-text-numeric" },
+                                { "orderDataType": "dom-text-numeric" },
+                                { "orderDataType": "dom-text-numeric" }
                             ]
                         });
                         // datatable.rows.add(productVariables); // Add new data
                         // datatable.columns.adjust().draw(); // Redraw the DataTable
                 
-                        editableTags();
+
                     }
                     
                     // document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
@@ -349,6 +356,7 @@
         const basePriceBtn = document.querySelector('#base-price');
 
         // Empty the HTML if there's data
+        document.querySelector('#submit-response').innerHTML = '';
         output.innerHTML = '';
 
         let combinationsArr = [];
@@ -405,53 +413,30 @@
                 </tr>  
                 `);
 
-                // const priceRow = document.createElement('tr');
-                // const priceData = document.createElement('td');
-                // const priceDiv = document.createElement('div');
-                // priceDiv.id = 'inner-prices';
-                // priceDiv.style.display = 'none';
-                // priceData.appendChild(priceDiv);
-                // for (i = 0; i < productVariables.length + 2; i++) {
-                //     priceRow.appendChild(document.createElement('td'));
-                // }
-
-                // priceRow.setAttribute('data-row', countCombination);
-                // for (let i = 2; i < 11; i++) {
-                //     let tempInput = document.createElement('input');
-                //     tempInput.setAttribute('placeholder', `Price ${i}`);
-                //     tempInput.className = 'ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset';
-                //     tempInput.name = `price_${i}`;
-                //     tempInput.type = 'number';
-                //     // $(tempInput).hide();
-
-                //     priceDiv.appendChild(tempInput);
-                // }
-                // priceRow.appendChild(priceData);
-
-                // document.getElementById('output').appendChild(priceRow);
-
                 const btnGenerate = document.querySelector('#btn-generate');
                 if (btnGenerate.hasAttribute('disabled')) {
                     btnGenerate.removeAttribute('disabled')
                 }
             })
 
-            output.innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
-
+            document.querySelector('#submit-response').innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
             let varCount = 0;
-
+            console.log(document.querySelector('#submit-prices'))
+            
             setTimeout(() => {
-                document.querySelectorAll('input[name="more-prices"]').forEach(prices => {
-                    prices.addEventListener('change', function (e) {
-                        if (this.checked) {
-                            // Count foreach iterations and use them in assigning id's
-                            varCount++;
-                            $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).hide().slideDown();
-                        } else {
-                            $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).show().slideUp();
-                        }
-                    })
-                });
+
+                
+                // document.querySelectorAll('input[name="more-prices"]').forEach(prices => {
+                //     prices.addEventListener('change', function (e) {
+                //         if (this.checked) {
+                //             // Count foreach iterations and use them in assigning id's
+                //             varCount++;
+                //             $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).hide().slideDown();
+                //         } else {
+                //             $(this.parentElement.parentElement.nextElementSibling.querySelector('td:last-child > div')).show().slideUp();
+                //         }
+                //     })
+                // });
                 
             }, 0);
 
@@ -517,6 +502,8 @@
             document.querySelector('#btn-generate').setAttribute('disabled', true);
             document.querySelector('#tab_logic').style.display = 'none';
         }
+
+        console.log(document.querySelector('#submit-prices'))
                     
     }
 
@@ -528,6 +515,7 @@
     const removeHeaders = function() {
         // Set data labels object as null
         // data.custom[currentElement].label = newLabel; 
+
         // Get all headers
         const theaders = document.querySelectorAll('.th-title');
 
@@ -559,19 +547,10 @@
                     th.setAttribute('data-header', label.toLowerCase());
                     th.innerText = label.replace(/\-/g, ' ');
                     const thead = document.querySelector('table thead tr');
-                    thead.insertBefore(th, thead.childNodes[0]);
+                    thead.insertBefore(th, thead.childNodes[1]);
                 } 
             })
 
-            
-            if(!document.querySelector('#index-no')) {
-                const thNo = document.createElement('th');
-                thNo.innerText = 'No.';
-                thNo.id = 'index-no';
-                const thead = document.querySelector('table thead tr');
-                console.log(thead.childNodes[0]);
-                thead.insertBefore(thNo, thead.childNodes[0]);
-            }
 
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
@@ -591,6 +570,10 @@
         // Change data
             removeHeaders();
 
+            function insertAfter(newNode, referenceNode) {
+                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+            }
+
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.reverse().map((label, i) => {
                 if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
@@ -599,17 +582,9 @@
                     th.setAttribute('data-header', label.toLowerCase());
                     th.innerText = label.replace(/\-/g, ' ');
                     const thead = document.querySelector('table thead tr');
-                    thead.insertBefore(th, thead.childNodes[0]);
+                    thead.insertBefore(th, thead.childNodes[1]);
                 } 
             })
-
-            if(!document.querySelector('#index-no')) {
-                const thNo = document.createElement('th');
-                thNo.innerText = 'No.';
-                thNo.id = 'index-no';
-                const thead = document.querySelector('table thead tr');
-                thead.insertBefore(thNo, thead.childNodes[0]);
-            }
 
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
@@ -752,12 +727,16 @@
                 // Passing true as parameters should we load already existing data
                 renderCombinations(combinationsArr, true);
 
+                console.log(document.querySelector('#submit-prices'))
+
                 renderTags(combinationsArr, data.selectizeArr);
                 editableTags();
 
+                console.log(document.querySelector('#submit-prices'))
+
                 $('#tab_logic').DataTable({
                     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
-                    "iDisplayLength": 100,
+                    "iDisplayLength": 500,
                     "columns": [
                         null,
                         ...data.labels.map(el => null),
@@ -767,6 +746,8 @@
                         { "orderDataType": "dom-text-numeric" }
                     ]
                 });
+
+                console.log(document.querySelector('#submit-prices'))
             }, 0)
         } 
 
@@ -825,7 +806,6 @@
 
             // Show table on submit
             document.querySelector('#tab_logic').style.display = 'table';
-            // $('#tab_logic').DataTable();
 
             // Declare empty variables where we store variables for table show
             data.productVariables = [];
@@ -833,16 +813,16 @@
             mapDataFromInput();
 
             if(data.productVariables.length > 0) {
+                $('#tab_logic').DataTable().clear().destroy();
+                        
                 renderHeaders();
-
                 // Render combinations
                 renderCombinations(data.productVariables);
-
-                $('#tab_logic').DataTable().destroy;
+            
                 // datatable.destroy();
                 $('#tab_logic').DataTable({
-                    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
-                    "iDisplayLength": 100,
+                    "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                    "iDisplayLength": 500,
                     "columns": [
                         null,
                         ...data.labels.map(el => null),
@@ -857,9 +837,6 @@
         
                 editableTags();
             }
-
-            console.log(median(data.test_cases));
-
             
         })
 
