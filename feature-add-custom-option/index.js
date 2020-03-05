@@ -194,7 +194,67 @@
         })
     }
 
+    const changeTag = function(element, curr, parentEl) {
+        const currentLabel = $(element)[0].getAttribute('data-label');
+        const currentOption = $(element)[0].getAttribute('data-option');
+
+        var $select = $(`div[data-field="${currentLabel}"] input`);
+        var selectize = $select[0].selectize;
+
+        var value = selectize.getValue().split(',');
+        var indexNo = value.findIndex(i => i === curr);
+
+        if(indexNo != -1) {
+            selectize.setCaret(indexNo);
+            selectize.removeItem(curr);
+        
+            selectize.addOption({text: $(parentEl)[0].innerText, value: $(parentEl)[0].innerText});
+            selectize.addItem($(parentEl)[0].innerText);
+
+            selectize.setCaret(selectize.items.length)
+        }
+
+        // Declare empty variables where we store variables for table show
+        data.productVariables = [];
+
+        mapDataFromInput();
+
+        if(data.productVariables.length > 0) {
+            $('#tab_logic').DataTable().clear().destroy();
+                
+            renderHeaders();
+            
+            // Render combinations
+            renderCombinations(data.productVariables);
+
+            console.log('rendered');
+
+            data.labels = [...new Set(data.labels)];
+
+            $('#tab_logic').DataTable({
+                "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                "iDisplayLength": 500,
+                "columns": [
+                    null,
+                    ...data.labels.map(el => null),
+                    null,
+                    { "orderDataType": "dom-text-numeric" },
+                    { "orderDataType": "dom-text-numeric" },
+                    { "orderDataType": "dom-text-numeric" }
+                ]
+            });
+
+            editableTags();
+            // datatable.rows.add(productVariables); // Add new data
+            // datatable.columns.adjust().draw(); // Redraw the DataTable
+    
+
+        }
+    }
+
     const editableTags = function() {
+        var blur = false;
+
         document.querySelectorAll('td[data-field="variables"]').forEach(el => {
             let curr = $(el)[0].innerText;
 
@@ -202,66 +262,28 @@
                 curr = $(this)[0].innerText;
             })
 
-            $(el).focusout(function(e) {
-                e.preventDefault();
-
-                const currentLabel = $(this)[0].getAttribute('data-label');
-                const currentOption = $(this)[0].getAttribute('data-option');
-
-                var $select = $(`div[data-field="${currentLabel}"] input`);
-                var selectize = $select[0].selectize;
-
-                var value = selectize.getValue().split(',');
-                var indexNo = value.findIndex(i => i === curr);
-
-                if(indexNo != -1) {
-                    selectize.setCaret(indexNo);
-                    selectize.removeItem(curr);
-                
-                    selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
-                    selectize.addItem($(el)[0].innerText);
-
-                    selectize.setCaret(selectize.items.length)
-                }
-
-                // Declare empty variables where we store variables for table show
-                data.productVariables = [];
-
-                mapDataFromInput();
-
-                if(data.productVariables.length > 0) {
-                    // $('#tab_logic').DataTable().clear().destroy();
-                        
-                    renderHeaders();
-                    // Render combinations
-                    renderCombinations(data.productVariables);
-
-                    editableTags();
-                
-                    // datatable.destroy();
-                    // $('#tab_logic').DataTable({
-                    //     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
-                    //     "iDisplayLength": 500,
-                    //     "columns": [
-                    //         null,
-                    //         ...data.labels.map(el => null),
-                    //         null,
-                    //         { "orderDataType": "dom-text-numeric" },
-                    //         { "orderDataType": "dom-text-numeric" },
-                    //         { "orderDataType": "dom-text-numeric" }
-                    //     ]
-                    // });
-                    // datatable.rows.add(productVariables); // Add new data
-                    // datatable.columns.adjust().draw(); // Redraw the DataTable
+            // $(el).on('blur', el, function(e) {
+            //     console.log('teeee');
+            //     if (!blur) {
+            //         blur = true;
+            //         var cell = $(this).closest('td');
+            //         ('#tab_logic').cell(cell).data('example data');
+            //         blur = false;
+            //     }
+            // })
             
-
-                }
-                
-                document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
-                    el.innerText = this.innerText;
-                    el.setAttribute('data-option', this.innerText);
-                })
+            // Fix an issue with Chrome browser
+            $(el).on('focusout', function(e) {
+                e.preventDefault();
+                // Add change tag ability
+                changeTag(this, curr, el);
+                // document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
+                //     el.innerText = this.innerText;
+                //     el.setAttribute('data-option', this.innerText);
+                // })
             })
+
+            // $(el).addEventListener('blur', e => e, { once: true });
 
             $(el).on("keydown", function(e) {
 
@@ -270,61 +292,8 @@
                 if(key == 13) {
                     e.preventDefault();
 
-                    const currentLabel = $(this)[0].getAttribute('data-label');
-                    const currentOption = $(this)[0].getAttribute('data-option');
-
-                    var $select = $(`div[data-field="${currentLabel}"] input`);
-                    var selectize = $select[0].selectize;
-
-                    var value = selectize.getValue().split(',');
-                    var indexNo = value.findIndex(i => i === curr);
-
-                    if(indexNo != -1) {
-                        selectize.setCaret(indexNo);
-                        selectize.removeItem(curr);
-                    
-                        selectize.addOption({text: $(el)[0].innerText, value: $(el)[0].innerText});
-                        selectize.addItem($(el)[0].innerText);
-
-                        selectize.setCaret(selectize.items.length)
-                    }
-
-                    // Declare empty variables where we store variables for table show
-                    data.productVariables = [];
-
-                    mapDataFromInput();
-
-                    if(data.productVariables.length > 0) {
-                        $('#tab_logic').DataTable().clear().destroy();
-
-                        renderHeaders();
-                        // Render combinations
-                        renderCombinations(data.productVariables);
-
-                        editableTags();
-                
-                        $('#tab_logic').DataTable({
-                            "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
-                            "iDisplayLength": 500,
-                            "columns": [
-                                null,
-                                ...data.labels.map(el => null),
-                                null,
-                                { "orderDataType": "dom-text-numeric" },
-                                { "orderDataType": "dom-text-numeric" },
-                                { "orderDataType": "dom-text-numeric" }
-                            ]
-                        });
-                        // datatable.rows.add(productVariables); // Add new data
-                        // datatable.columns.adjust().draw(); // Redraw the DataTable
-                
-
-                    }
-                    
-                    // document.querySelectorAll(`td[data-label="${currentLabel}"][data-option="${currentOption}"]`).forEach(el => {
-                    //     el.innerText = this.innerText;
-                    //     el.setAttribute('data-option', this.innerText);
-                    // })
+                    // Add change tag ability
+                    changeTag(this, curr, el);
                 } 
             })
         });
@@ -401,7 +370,7 @@
                         <input type="text" name="sku" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                     </td>
                     <td class="text-center">
-                        <input type="text" name="inventory" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                        <input type="text" name="inventory" max="999999" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                     </td>
                     <td class="text-center">
                         <input type="number" name="price" value="${basePriceBtn.value}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
@@ -421,7 +390,6 @@
 
             document.querySelector('#submit-response').innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
             let varCount = 0;
-            console.log(document.querySelector('#submit-prices'))
             
             setTimeout(() => {
 
@@ -501,10 +469,7 @@
         } else {
             document.querySelector('#btn-generate').setAttribute('disabled', true);
             document.querySelector('#tab_logic').style.display = 'none';
-        }
-
-        console.log(document.querySelector('#submit-prices'))
-                    
+        }                    
     }
 
     const capitalizeFirst = function(string) {
@@ -666,6 +631,8 @@
         // const res = await fetch('http://localhost:4400/product_data');
         // const data = await res.json();
 
+
+
         // Mock data response (change to json api url)
         const responseData = options;
         const formOutput = document.querySelector('#form-output');
@@ -727,12 +694,8 @@
                 // Passing true as parameters should we load already existing data
                 renderCombinations(combinationsArr, true);
 
-                console.log(document.querySelector('#submit-prices'))
-
                 renderTags(combinationsArr, data.selectizeArr);
                 editableTags();
-
-                console.log(document.querySelector('#submit-prices'))
 
                 $('#tab_logic').DataTable({
                     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
@@ -746,8 +709,6 @@
                         { "orderDataType": "dom-text-numeric" }
                     ]
                 });
-
-                console.log(document.querySelector('#submit-prices'))
             }, 0)
         } 
 
