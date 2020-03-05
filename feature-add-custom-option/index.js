@@ -194,11 +194,16 @@
         })
     }
 
-    const changeTag = function(element, curr, parentEl) {
+    const changeTag = function(element, curr, parentEl, custom = false) {
         const currentLabel = $(element)[0].getAttribute('data-label');
         const currentOption = $(element)[0].getAttribute('data-option');
-
+        // var $select = custom ? $(`div[data-option="${currentOption}"] input`) : $(`div[data-field="${currentLabel}"] input`);
         var $select = $(`div[data-field="${currentLabel}"] input`);
+
+        console.log(element,curr,parentEl);
+
+        
+        console.log('$select:: ', currentOption);
         var selectize = $select[0].selectize;
 
         var value = selectize.getValue().split(',');
@@ -302,8 +307,17 @@
     const mapDataFromInput = function() {
         Array.from(document.querySelectorAll('.input_options')).map((input, index) => {
                 
-            let label = input.querySelector('label').innerText;
-            label = label.replace(/\s/gi, '-');
+            // let label = input.querySelector('label').innerText;
+            // label = label.replace(/\s/gi, '-');
+
+            let label = input.querySelector('label').innerText.replace(/\s/gi, '-');;
+            let unique = input.querySelector('div.ui-input-text').getAttribute('data-field');;
+
+            // if(input.querySelector('label').getAttribute('data-format') === 'standard') {
+            //     label = input.querySelector('label').innerText.replace(/\s/gi, '-');
+            // } else {
+            //     label = input.querySelector('div.ui-input-text').getAttribute('data-field');
+            // }
 
             const newInputField = data.selectizeArr[index].items;
             const inputField = input.querySelector('input');
@@ -312,6 +326,7 @@
             if(inputField.value != '') {
                 data.labels.push(label);
                 data.productVariables.push({
+                    unique,
                     label,
                     options: newInputField 
                 });
@@ -329,7 +344,8 @@
         output.innerHTML = '';
 
         let combinationsArr = [];
-        let productLabels = []
+        let productLabels = [];
+        let uniqueLabels = [];
 
         if(onload == true) {
             combinationsArr = productVariables;
@@ -337,8 +353,10 @@
         } else {
             combinationsArr = combinations(productVariables);
             productLabels = productVariables.map(el => el.label.toLowerCase());
+            uniqueLabels = productVariables.map(el => el.unique);
         }
 
+    
         // Show number of all combinations
         document.querySelector('#combinations-count').innerText = 'Number of combinations: ' + combinationsArr.length;
 
@@ -352,6 +370,7 @@
                 });
 
                 countCombination++;
+
                 $('#output').append(`
                     <tr id="row-${countCombination}" data-row-abbreviation="${c.join('--')}" class="row-variables">
                         <td class="text-center">
@@ -359,7 +378,7 @@
                         </td>
                     ${combination.map
                         ((c,i) => {
-                            return `<td data-field="variables" data-option="${c}" data-label="${productLabels[i]}" id="${countCombination}" contenteditable="true">${c}</td>`
+                            return `<td data-field="variables" data-option="${c}" data-label="${uniqueLabels[i]}" id="${countCombination}" contenteditable="true">${c}</td>`
                         })
                     }
 
@@ -599,6 +618,7 @@
                         label: o.querySelector('label[data-format="custom"]').innerText,
                         options: options.split(',')
                     }
+
                 }
 
                 site_option_values[uniqueLabel.toLowerCase()] = {
@@ -719,7 +739,7 @@
             if(dataValue <= 10) {
                 $('.custom-options').append(`
                 <div class="ui-field-contain input_options">
-                    <label data-format="custom" for="option_${dataValue}" contenteditable="true">Option ${dataValue}</label>
+                    <label data-format="custom" for="option-${dataValue}" contenteditable="true">Option ${dataValue}</label>
                     <div data-field="option-${dataValue}" data-value="${dataValue}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                         <input name='${dataValue}'>
                 </div>
