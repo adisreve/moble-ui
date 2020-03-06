@@ -474,9 +474,9 @@
                     inventories.push(inventory);
                     skus.push(sku || '-');
                 })
-
+                const uniqueLabels = data.productVariables.map(el => el.unique);
                 const finalJson = {
-                    columns: productLabels,
+                    columns: uniqueLabels,
                     prices: toJSON(obj, prices),
                     skus: toJSON(obj, skus),
                     qty: toJSON(obj, inventories)
@@ -598,9 +598,12 @@
             const uniqueLabel = uniq == 'length' ? 'length-value' : uniq;
             const label = o.querySelector('label');
 
+            console.log(uniq, uniqueLabel, label);
+
             // Define custom and standard options labels;
             const options = o.querySelector('input').value;
 
+            console.log(options);
             if(label && options != '') {
 
                 // separate site option values from two - regular ones and custom options
@@ -622,15 +625,15 @@
                 }
 
                 site_option_values[uniqueLabel.toLowerCase()] = {
-                    'label': label,
+                    'label': label.innerText,
                     'options': options.split(',')
                 }
             }   
         })
-
         // document.querySelector('#json-output').value = JSON.stringify(site_option_values, null, "\t");
 
         return JSON.stringify(site_option_values, null, "\t");
+
     }
 
     $.fn.dataTable.ext.order['dom-text'] = function  ( settings, col ) {
@@ -650,8 +653,6 @@
     $(document).ready(async function () {
         // const res = await fetch('http://localhost:4400/product_data');
         // const data = await res.json();
-
-
 
         // Mock data response (change to json api url)
         const responseData = options;
@@ -739,8 +740,8 @@
             if(dataValue <= 10) {
                 $('.custom-options').append(`
                 <div class="ui-field-contain input_options">
-                    <label data-format="custom" for="option-${dataValue}" contenteditable="true">Option ${dataValue}</label>
-                    <div data-field="option-${dataValue}" data-value="${dataValue}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                    <label data-format="custom" for="option_${dataValue}" contenteditable="true">Option ${dataValue}</label>
+                    <div data-field="option_${dataValue}" data-value="${dataValue}" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
                         <input name='${dataValue}'>
                 </div>
             `)
