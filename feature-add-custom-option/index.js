@@ -74,6 +74,7 @@
         }
     }
 
+
     // Define state/data
     const data = {
         test_cases: [],
@@ -324,7 +325,8 @@
             // console.log('inptufield::: ' + JSON.stringify(inputField));
             
             if(inputField.value != '') {
-                data.labels.push(label);
+                data.labels.push(unique);
+                // data.labels.push(label);
                 data.productVariables.push({
                     unique,
                     label,
@@ -347,7 +349,9 @@
         let productLabels = [];
         let uniqueLabels = [];
 
-        if(onload == true) {
+        console.log(productVariables);
+
+        if(onload) {
             combinationsArr = productVariables;
             productLabels = existing_data.columns.map(col => col);
         } else {
@@ -356,7 +360,6 @@
             uniqueLabels = productVariables.map(el => el.unique);
         }
 
-    
         // Show number of all combinations
         document.querySelector('#combinations-count').innerText = 'Number of combinations: ' + combinationsArr.length;
 
@@ -558,17 +561,38 @@
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
 
-            // Reversing and showing the labels as table header to be in order that they show up
-            data.labels.reverse().map((label, i) => {
-                if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
-                    const th = document.createElement('th');
-                    th.className = 'th-title header-' + label.toLowerCase();
-                    th.setAttribute('data-header', label.toLowerCase());
-                    th.innerText = label.replace(/\-/g, ' ');
-                    const thead = document.querySelector('table thead tr');
-                    thead.insertBefore(th, thead.childNodes[1]);
-                } 
-            })
+            
+
+            if(data.productVariables.length > 0) {
+                const newDataProductVariables = [...data.productVariables];
+                // Reversing and showing the labels as table header to be in order that they show up
+                newDataProductVariables.reverse().map((label, i) => {
+                    console.log(label.label);
+                    if(!document.querySelector(`.header-${label.unique.toLowerCase()}`)) {
+                        const th = document.createElement('th');
+                        th.className = 'th-title header-' + label.unique.toLowerCase();
+                        th.setAttribute('data-header', label.unique.toLowerCase());
+                        th.innerText = label.label.replace(/\-/g, ' ');
+                        const thead = document.querySelector('table thead tr');
+                        thead.insertBefore(th, thead.childNodes[1]);
+                    } 
+                })         
+            } else {
+
+                // TODO - Load custom option labels from existing data & site options
+                data.labels.reverse().map((label, i) => {
+                    if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
+                        const th = document.createElement('th');
+                        th.className = 'th-title header-' + label.toLowerCase();
+                        th.setAttribute('data-header', label.toLowerCase());
+                        th.innerText = label.replace(/\-/g, ' ');
+                        const thead = document.querySelector('table thead tr');
+                        thead.insertBefore(th, thead.childNodes[1]);
+                    } 
+                })
+            }
+
+
 
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
@@ -702,7 +726,6 @@
         // load data on document load
         if(existing_data) {
 
-
             setTimeout(() => {
                 combinationsArr = Object.keys(existing_data.prices).map(el => {
                     return el.split('--')
@@ -710,6 +733,7 @@
     
                 document.querySelector('#tab_logic').style.display = 'table';
                 data.labels = existing_data.columns.map(el => el.toUpperCase());
+                // data.productVariables = existing_data.
 
                 renderHeaders();
                 // Passing true as parameters should we load already existing data
@@ -765,7 +789,29 @@
 
             $("label[contenteditable]").focusout(function(e) {
                 e.preventDefault();
-                renderHeaders(`${currentValue.replace(/\s/g, '-')}`, $(this)[0].innerText.replace(/\s/g, '-'));
+
+                data.productVariables = [];
+
+                mapDataFromInput();
+
+                // $('#tab_logic').DataTable().columns.adjust().draw();
+                $('#tab_logic').DataTable().clear().destroy();
+
+                console.log(`${currentValue.replace(/\s/g, '-')}`, $(this)[0].innerText.replace(/\s/g, '-'))
+                // renderHeaders(`${currentValue.replace(/\s/g, '-')}`, $(this)[0].innerText.replace(/\s/g, '-'));
+                renderHeaders();
+                renderCombinations(data.productVariables);
+
+                // renderTags(data.productVariables, data.selectizeArr);
+
+                $('#tab_logic').DataTable({
+                    "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                    "iDisplayLength": 500
+                });
+
+                editableTags();
+
+                // Passing true as parameters should we load already existing data
             })
 
             $("label[contenteditable]").on("keydown",function(e){
@@ -774,6 +820,20 @@
                 if(key == 13) {
                     e.preventDefault();
                     renderHeaders(`${currentValue.replace(/\s/g, '-')}`, $(this)[0].innerText.replace(/\s/g, '-'));
+
+                    // $('#tab_logic').DataTable().destroy();
+                    // $('#tab_logic').DataTable({
+                    //     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
+                    //     "iDisplayLength": 500,
+                    //     "columns": [
+                    //         null,
+                    //         ...data.labels.map(el => null),
+                    //         null,
+                    //         { "orderDataType": "dom-text-numeric" },
+                    //         { "orderDataType": "dom-text-numeric" },
+                    //         { "orderDataType": "dom-text-numeric" }
+                    //     ]
+                    // });
 
                     $(this).blur();  // lose focus
                 } 
