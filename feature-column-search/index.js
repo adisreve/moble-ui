@@ -355,7 +355,7 @@
                                 ${el.options.map(option => {
                                     return `<option value="${option}" data-label="${el.unique}">${option}</option>`
                                 }).join('')}
-                                <option value="all" data-label="all">Show all</option>
+                                <option value="all" data-label="all" selected>Show all</option>
                             </select>
                         </div>`
                     }).join('')}
