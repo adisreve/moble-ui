@@ -267,16 +267,6 @@
             $(el).on("focus", function(e) {
                 curr = $(this)[0].innerText;
             })
-
-            // $(el).on('blur', el, function(e) {
-            //     console.log('teeee');
-            //     if (!blur) {
-            //         blur = true;
-            //         var cell = $(this).closest('td');
-            //         ('#tab_logic').cell(cell).data('example data');
-            //         blur = false;
-            //     }
-            // })
             
             // Fix an issue with Chrome browser
             $(el).on('focusout', function(e) {
@@ -788,6 +778,8 @@
 
                 renderHeaders();
                 // Passing true as parameters should we load already existing data
+
+
                 renderCombinations(combinationsArr, true);
 
                 renderTags(combinationsArr, data.selectizeArr);
@@ -805,6 +797,11 @@
                         { "orderDataType": "dom-text-numeric" }
                     ]
                 });
+
+                mapDataFromInput();
+
+                searchFilters();
+
             }, 0)
         } 
 
