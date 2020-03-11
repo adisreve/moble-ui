@@ -67,4 +67,32 @@
     width:12%!important;
   }
 
- 
+  .table-filters {
+    display:flex;
+    padding-bottom: 30px;
+  }
+
+  .table-filters select {
+      margin-right: 20px;
+      width: auto;
+      padding: 5px 20px;
+  }
+
+  .table-filters label {
+    margin-bottom:5px;
+  }
+
+  .table-filters .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filter-container h4 {
+    margin:0;
+    font-weight:900;
+    padding: 15px 0;
+  }
+
+  .filter-container {
+    display: none;
+  }

@@ -74,6 +74,7 @@
         }
     }
 
+
     // Define state/data
     const data = {
         test_cases: [],
@@ -139,7 +140,7 @@
             obj[labels[index]] = val;
             return obj;
         }, {}))
-e
+
         return output;
     }
 
@@ -152,7 +153,6 @@ e
             el.forEach(newEl => {
                 combination.push(newEl);
             });
-
             const currComb = combination.join('--');
             variables[currComb] = values[index];
         })
@@ -164,6 +164,7 @@ e
         // map array with existing_data.columns [0] = column value 0 [1] means column value 1
 
         let newArr = {};
+
         existing_data.columns.map((e,i) => {
             newArr[e] = []
 
@@ -335,7 +336,58 @@ e
         })
     }
 
-    const renderCombinations = function(productVariables, onload = false) {        
+    const searchFilters = () => {
+
+        const searchContainer = $('.table-filters');
+
+        if(searchContainer.length > 0) { 
+            searchContainer[0].innerHTML = '';
+        }
+
+        if(data.productVariables.length > 1) {
+            $('.filter-container').show();
+
+            searchContainer.append(`
+                ${data.productVariables.map((el,i) => {
+                    return `<div class="form-group">
+                        <label for="${el.label}">${capitalizeFirst(el.label).replace(/\-/g, ' ')}</label>
+                        <select name="${el.label}" data-position="${i+1}" class="search-filters">
+                                ${el.options.map(option => {
+                                    return `<option value="${option}" data-label="${el.unique}">${option}</option>`
+                                }).join('')}
+                                <option value="all" data-label="all">Show all</option>
+                            </select>
+                        </div>`
+                    }).join('')}
+                `)
+        }
+
+        setTimeout(() => {
+            $('.search-filters').each(function(filter) {;
+                this.addEventListener('change', () => {
+                    const table = $('#tab_logic').dataTable().api();
+                    let val = $(this).val();
+                    const columnPosition = $(this)[0].getAttribute('data-position');
+                    
+                    if(val === 'all') {
+                        table.column(columnPosition).search('').draw()
+                    } else {
+                        table.column(columnPosition).search(val).draw();
+                    }
+
+
+                    console.log(this.value);
+                })
+            })
+        }, 0)
+
+
+
+    }
+
+    const renderCombinations = function(productVariables, onload = false) {     
+        
+        searchFilters();
 
         const output = document.querySelector('#output');
         const basePriceBtn = document.querySelector('#base-price');
@@ -347,6 +399,8 @@ e
         let combinationsArr = [];
         let productLabels = [];
         let uniqueLabels = [];
+
+        console.log(productVariables);
 
         if(onload) {
             combinationsArr = productVariables;
@@ -557,6 +611,8 @@ e
             function insertAfter(newNode, referenceNode) {
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
+
+            
 
             if(data.productVariables.length > 0) {
                 const newDataProductVariables = [...data.productVariables];
