@@ -96,3 +96,25 @@
   .filter-container {
     display: none;
   }
+
+  .searching-filters {
+    display:inline-flex;
+    width:100%;
+    /* margin-right:30px; */
+  }
+
+  #tab_logic_filter {
+    display:flex;
+    flex-direction: row;
+    width:50%;
+    text-align: left;
+  }
+
+  #tab_logic_filter label {
+    display:none;
+  }
+
+  #tab_logic_filter button {
+    width: 160px;
+    margin-left:15px;
+  }

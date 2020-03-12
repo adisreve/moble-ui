@@ -233,8 +233,6 @@
             // Render combinations
             renderCombinations(data.productVariables);
 
-            console.log('rendered');
-
             data.labels = [...new Set(data.labels)];
 
             $('#tab_logic').DataTable({
@@ -253,6 +251,8 @@
             editableTags();
             // datatable.rows.add(productVariables); // Add new data
             // datatable.columns.adjust().draw(); // Redraw the DataTable
+
+            searchFilters();
     
 
         }
@@ -337,41 +337,117 @@
         if(data.productVariables.length > 1) {
             $('.filter-container').show();
 
-            searchContainer.append(`
-                ${data.productVariables.map((el,i) => {
-                    return `<div class="form-group">
-                        <label for="${el.label}">${capitalizeFirst(el.label).replace(/\-/g, ' ')}</label>
-                        <select name="${el.label}" data-position="${i+1}" class="search-filters">
-                                ${el.options.map(option => {
-                                    return `<option value="${option}" data-label="${el.unique}">${option}</option>`
-                                }).join('')}
-                                <option value="all" data-label="all" selected>Show all</option>
-                            </select>
-                        </div>`
-                    }).join('')}
-                `)
-        }
+            // searchContainer.append(`
+            //     ${data.productVariables.map((el,i) => {
+            //         return `<div class="form-group">
+            //             <label for="${el.label}">${capitalizeFirst(el.label).replace(/\-/g, ' ')}</label>
+            //             <select name="${el.label}" data-position="${i+1}" class="search-filters">
+            //                     ${el.options.map(option => {
+            //                         return `<option value="${option}" data-label="${el.unique}">${option}</option>`
+            //                     }).join('')}
+            //                     <option value="all" data-label="all" selected>Show all</option>
+            //                 </select>
+            //             </div>`
+            //         }).join('')}
+            //     `)
+            $('#tab_logic_filter')
+            $('#tab_logic_filter').append(`<input type="text" class="searching-filters ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset" name="search-filters" placeholder="Search by tags..."></input> <button class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="reset-search-filter">Reset filter</button>`);
 
-        setTimeout(() => {
-            $('.search-filters').each(function(filter) {;
-                this.addEventListener('change', () => {
-                    const table = $('#tab_logic').dataTable().api();
-                    let val = $(this).val();
-                    const columnPosition = $(this)[0].getAttribute('data-position');
-                    
-                    if(val === 'all') {
-                        table.column(columnPosition).search('').draw()
-                    } else {
-                        table.column(columnPosition).search(val).draw();
-                    }
+            // searchContainer.append(`<input type="text" class="searching-filters ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset" name="search-filters"></input> <button class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="reset-search-filter">Reset filter</button>`);
 
+            const uniqueArr = [];
 
-                    console.log(this.value);
+            // Create array of objects with adapted properties for selectize 
+            data.productVariables.forEach((el, index) => {
+                el.options.map(innerEl => {
+                    uniqueArr.push({ value: innerEl, unique: el.unique + '-' + innerEl ,label: el.unique, column: index + 1 })
                 })
-            })
-        }, 0)
+            });
 
+            setTimeout(() => {
+                const items = new Object();
+                const table = $('#tab_logic').dataTable().api();
 
+                const $select = $('input[name="search-filters"]').selectize({
+                    delimiter: ',',
+                    options: uniqueArr,
+                    valueField: 'unique',
+                    labelField: 'value',
+                    searchField: 'value',
+                    persist: false,
+                    render: {
+                        item: function (data, escape) {
+                            return `<div class="item custom-search-tag" data-tag="${data.value}" data-value="${escape(data.unique)}" data-column="${escape(data.label)}" data-column-index="${escape(data.column)}">${data.value}</div>`
+                        }
+                    },
+                    onChange: function(item) {
+                         const current = item.split(',');
+
+                    },
+                    onItemAdd: function(value, $item) {
+                        console.log('ITEM ADDED - ' + value, $item);
+
+                        const uniqueValue = $item.attr('data-value');
+                        const tagName = $item.attr('data-tag');
+                        const column = $item.attr('data-column');
+                        const columnIndex = $item.attr('data-column-index');
+
+                        if(items[column]) {
+                            items[column].push(tagName);
+                        } else {
+                            items[column] = [];
+                            items[column].push(tagName);
+                        }
+
+                        let curTags;
+
+                        if(items[column].length > 1) {
+                            curTags = items[column].join('|');
+                        } else {
+                            curTags = items[column][0];
+                        }
+
+                        // Search through table
+                        table.columns(columnIndex).search(curTags, true, false).draw();
+                    },
+                    onItemRemove: function(value, $item) {
+                        console.log('ITEM REMOVED ::: ' + value, $item.attr('data-tag'));  
+
+                        const uniqueValue = $item.attr('data-value');
+                        const tagName = $item.attr('data-tag');
+                        const column = $item.attr('data-column');
+                        const columnIndex = $item.attr('data-column-index');
+
+                        items[column].splice(items[column].indexOf(tagName), 1);
+
+                        let curTags;
+
+                        if(items[column].length > 1) {
+                            curTags = items[column].join('|');
+                            console.log(curTags);
+                        } else {
+                            curTags = items[column][0];
+                        }
+
+                        console.log(columnIndex)
+
+                        table.columns(columnIndex).search('').draw();
+                        // Search through table
+                        table.columns(columnIndex).search(curTags, true, false).draw();
+                    }
+                    
+                })
+
+                $('#reset-search-filter').click(function() {
+
+                    table.columns().search('').draw();
+
+                    const selectize = $select[0].selectize;
+
+                    selectize.clear();
+                })
+            }, 0)
+        }
 
     }
 
@@ -749,6 +825,8 @@
             // Add selectize tags to every iteration
             // Set timeout is waiting for element to initialize
             setTimeout(() => {
+                console.log(newOptions);
+
                 data.selectizeArr.push($(`input[name="${options[0]}"`).selectize({
                     delimiter: ',',
                     options: newOptions,
@@ -859,6 +937,7 @@
 
                 editableTags();
 
+                searchFilters();
                 // Passing true as parameters should we load already existing data
             })
 
@@ -926,6 +1005,8 @@
                 // datatable.columns.adjust().draw(); // Redraw the DataTable
         
                 editableTags();
+
+                searchFilters();
             }
             
         })
