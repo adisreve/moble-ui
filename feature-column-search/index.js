@@ -557,6 +557,7 @@
             document.querySelector('#submit-prices').addEventListener('click', e => {
 
                 document.querySelector('#site_options').innerHTML = productTags();
+                console.log(productTags());
 
                 const basePriceBtn = document.querySelector('#base-price');
                 const rows = document.querySelectorAll('table#tab_logic tbody tr.row-variables');
@@ -733,10 +734,11 @@
         const optionForm = document.querySelectorAll('.input_options');
         let site_option_values = {};
             
+        console.log(Array.from(optionForm));
         Array.from(optionForm).map(o => {
 
             const uniq = o.querySelector('div').getAttribute('data-field');
-            const uniqueLabel = uniq == 'length' ? 'length-value' : uniq;
+            const uniqueLabel = uniq + '';
             const label = o.querySelector('label');
 
             console.log(uniq, uniqueLabel, label);
@@ -748,27 +750,29 @@
             if(label && options != '') {
 
                 // separate site option values from two - regular ones and custom options
-                if(label.getAttribute('data-format') == 'standard') {
-                    data.standard_labels.push(uniqueLabel);
-                    data.standard[uniqueLabel] = {
-                        unique: uniqueLabel,
-                        label: o.querySelector('label[data-format="standard"]').innerText,
-                        options: options.split(',')
-                    }
-                } else {
-                    data.custom_labels.push(uniqueLabel);
-                    data.custom[uniqueLabel] = {
-                        unique: uniqueLabel,
-                        label: o.querySelector('label[data-format="custom"]').innerText,
-                        options: options.split(',')
-                    }
+                // if(label.getAttribute('data-format') == 'standard') {
+                //     data.standard_labels.push(uniqueLabel);
+                //     console.log(data.standard, data.standard_labels);
+                //     data.standard[uniqueLabel] = {
+                //         unique: uniqueLabel,
+                //         label: o.querySelector('label[data-format="standard"]').innerText,
+                //         options: options.split(',')
+                //     }
+                // } else {
+                //     data.custom_labels.push(uniqueLabel);
+                //     data.custom[uniqueLabel] = {
+                //         unique: uniqueLabel,
+                //         label: o.querySelector('label[data-format="custom"]').innerText,
+                //         options: options.split(',')
+                //     }
 
-                }
+                // }
 
-                site_option_values[uniqueLabel.toLowerCase()] = {
+                site_option_values[String(uniqueLabel.toLowerCase())] = {
                     'label': label.innerText,
                     'options': options.split(',')
                 }
+                
             }   
         })
         // document.querySelector('#json-output').value = JSON.stringify(site_option_values, null, "\t");
