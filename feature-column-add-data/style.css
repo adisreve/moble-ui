@@ -1,0 +1,143 @@
+
+.ui-mobile [data-role=page], .ui-mobile [data-role=dialog], .ui-page {
+    display:block;
+  }
+  
+  .selectize-control.single .selectize-input.input-active, .selectize-input {
+    background: transparent;
+  }
+  
+  .variants_table {
+    width:100%;
+  }
+  
+  .variants_table th {
+    text-align:left;
+  }
+  
+  .more-prices {
+    display:block;
+    padding:15px;
+  }
+  
+  #inner-prices input {
+    display:block;
+  }
+
+  [contenteditable] {
+    padding: .25em 0em;
+    transition: .3s all ease-in-out;
+  }
+  
+  [contenteditable]:hover,
+  [contenteditable]:focus {
+    background-color:rgba(0,0,0,0.4);
+  }
+  
+  [contenteditable]:hover {
+    background: rgba(0,0,0,0.4);
+    outline: 2px solid #eee;
+  }
+  
+  [contenteditable]:focus {
+    background: rgba(0,0,0,0.5);
+    outline: 2px solid rgba(255,255,255,0.8);
+    color:rgb(1, 116, 35);
+  }
+
+  td[data-field="variables"][contenteditable]:focus {
+    padding:0;
+    width:auto;
+
+  }
+
+  table.dataTable tbody tr {
+    background-color:initial;
+  }
+
+  input.ui-input-text.ui-body-inherit.ui-corner-all.ui-shadow-inset {
+    width: 100%;
+  }
+
+  /* input.ui-input-text.ui-body-inherit.ui-corner-all.ui-shadow-inset[name="inventory"] {
+    width:50%;
+  } */
+  
+  th#inventory {
+    width:12%!important;
+  }
+
+  .table-filters {
+    display:flex;
+    padding-bottom: 30px;
+  }
+
+  .table-filters select {
+      margin-right: 20px;
+      width: auto;
+      padding: 5px 20px;
+  }
+
+  .table-filters label {
+    margin-bottom:5px;
+  }
+
+  .table-filters .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filter-container h4 {
+    margin:0;
+    font-weight:900;
+    padding: 15px 0;
+  }
+
+  .filter-container {
+    display: none;
+  }
+
+  .searching-filters {
+    display:inline-flex;
+    width:100%;
+    /* margin-right:30px; */
+  }
+
+  #tab_logic_filter {
+    display:flex;
+    flex-direction: row;
+    width:50%;
+    text-align: left;
+  }
+
+  #tab_logic_filter label {
+    display:none;
+  }
+
+  #tab_logic_filter button {
+    width: 160px;
+    margin-left:15px;
+  }
+
+  .apply-data {
+    display:flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-evenly
+  }
+
+  .apply-data .ui-input-text {
+    width: 60%;
+  }
+
+  .apply-data input[type="text"] {
+    padding: 5px;
+  }
+
+  #apply-data {
+    margin-left:10px;
+    padding:0;
+    /* margin:0; */
+    /* height:45px; */
+    border: 0;
+  }

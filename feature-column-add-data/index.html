@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css">
+
+    <link rel="stylesheet" href="../editor.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="ui-mobile-viewport  ui-overlay-b pace-done pace-done">
+    <div data-role="page" id="admin_edit_meta"
+        data-tags="Admin,Banner,Bars,Blog,Cacao Mint,Category,Coca Berry,Cocoa Berry,Colours,Demo,Event,Family,Feature,Group 1,Group 2,Group 3,Group 4,Group 5,Mixed,New,News,Notification,Pack,Photo,Product,Product1,Product2,Product3,Product4,Product5,Product6,ProductHome,Project,Salted Caramel,Sample,Slider,Sweat,Testimonial,Text Slider Home,Thank You Email,Thank You Page,Tube,products"
+        data-theme="b" data-url="admin_edit_meta" tabindex="0"
+        class="ui-page ui-page-theme-b ui-page-header-fixed ui-page-active" style="padding-top: 62px;">
+
+        <div class="ui-nodisc-icon text-block max-grid">
+            <div data-theme="a" style="margin-bottom:1em;" class="light-overlay-lightest">
+                <div class="container">
+                    <h4 id="setting">UI Options</h4>
+                    <div id="form-output">
+                        <div class="ui-field-contain">
+                            <label for="base-price">
+                                <strong>Base Price</strong>
+                            </label>
+                            <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                                <input required="required" name="base-price" id="base-price" type="number" placeholder="AUD">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5>Custom Options</h5>
+                    <div class="custom-options"></div>
+                    <button value="Add New" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-add-new">Add New</button>
+                    <hr>
+                    <span id="combinations-count"></span>
+                    <button value="Save Variants" type="submit" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all form-submit"><span><i class="fa fa-search"></i>SAVE VARIANTS</span></button>
+                    <button value="Autogenerate" type="submit" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate" disabled style="display:none;"span><i class="fa fa-search"></i> AUTOGENERATE</span></button>
+                </div>
+
+                <div class="container">
+                    <!-- <div class="filter-container">
+                        <h4>Search Filters</h4>
+                        <div class="table-filters"> </div>
+                        <hr>
+                    </div> -->
+                    <div class="apply-data">
+                        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                            <label for="apply-sku"></label>
+                            <input required="required" name="apply-sku" id="apply-sku" type="text" placeholder="SKU">
+                        </div>
+                        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                            <label for="apply-inventory"></label>
+                            <input required="required" name="apply-inventory" id="apply-inventory" type="text" placeholder="Inventory">
+                        </div>
+                        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                            <label for="apply-price"></label>
+                            <input required="required" name="apply-price" id="apply-price" type="number" placeholder="Price">
+                        </div>
+                        <button class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="apply-data">Submit</button>
+                    </div>
+
+                    <table class="variants_table" id="tab_logic" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th id="no">
+                                    No.
+                                </th>
+                                <th id="before">
+                                    QR
+                                </th>
+                                <th>
+                                    SKU
+                                </th>
+                                <th id="inventory">
+                                    Inventory
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <!-- <th>
+                                    More Prices 
+                                </th> -->
+                            </tr>
+                        </thead>
+                        <tbody id="output">
+                        </tbody>
+                    </table>
+                    <div id="submit-response"></div>
+
+                    <div class="ui-field-contain">
+                        <label for="note">JSON Response</label>
+                        <textarea id="json-output" name="note" rows="10" cols="65" 
+                        class="ui-input-text ui-shadow-inset ui-body-inherit ui-corner-all ui-textinput-autogrow" style="height: 72px;"></textarea>
+                    </div>
+                    
+                    <div class="ui-field-contain">
+                        <label for="note">Site Options</label>
+                        <textarea id="site_options" name="note" rows="10" cols="65" 
+                        class="ui-input-text ui-shadow-inset ui-body-inherit ui-corner-all ui-textinput-autogrow" style="height: 72px;"></textarea>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="//use.typekit.net/dqb1xaf.js"></script>
+    <script type="text/javascript">
+        try {
+            Typekit.load();
+        } catch (e) {}
+    </script>
+    <script src="index.js"></script>
+</body>
+
+</html>
