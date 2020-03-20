@@ -123,7 +123,8 @@
     display:flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-evenly
+    justify-content: space-evenly;
+    margin-bottom:20px;
   }
 
   .apply-data .ui-input-text {
@@ -137,7 +138,5 @@
   #apply-data {
     margin-left:10px;
     padding:0;
-    /* margin:0; */
-    /* height:45px; */
     border: 0;
   }
