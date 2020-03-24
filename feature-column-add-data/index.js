@@ -163,7 +163,6 @@
 
     const renderTags = function(arr, selectizeArr) {
         // map array with existing_data.columns [0] = column value 0 [1] means column value 1
-
         let newArr = {};
 
         existing_data.columns.map((e,i) => {
@@ -201,11 +200,7 @@
         const currentOption = $(element)[0].getAttribute('data-option');
         // var $select = custom ? $(`div[data-option="${currentOption}"] input`) : $(`div[data-field="${currentLabel}"] input`);
         var $select = $(`div[data-field="${currentLabel}"] input`);
-
-        console.log(element,curr,parentEl);
-
         
-        console.log('$select:: ', currentOption);
         var selectize = $select[0].selectize;
 
         var value = selectize.getValue().split(',');
@@ -234,11 +229,12 @@
             // Render combinations
             renderCombinations(data.productVariables);
 
-            data.labels = [...new Set(data.labels)];
+            data.labels = [...new Set(data.labels.map(el => el.toLowerCase()))];
 
             $('#tab_logic').DataTable({
                 "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
                 "iDisplayLength": 500,
+                "bSortCellsTop": true,
                 "columns": [
                     null,
                     ...data.labels.map(el => null),
@@ -453,7 +449,7 @@
     }
 
     const applyData = () => {
-        const dataContainer = document.querySelector('.apply-data');
+        const dataContainer = document.querySelector('#second-row');
 
         // Define variables for specific input elements values
         const applySku = dataContainer.querySelector('input[name="apply-sku"]');
@@ -461,7 +457,7 @@
         const applyPrice = dataContainer.querySelector('input[name="apply-price"]');
 
         // Get submit button
-        const applyDataSubmit = dataContainer.querySelector('#apply-data');
+        const applyDataSubmit = document.querySelector('#apply-data');
 
         // Add click listener for submit button
         applyDataSubmit.addEventListener('click', (e) => {
@@ -536,6 +532,7 @@
         if(onload) {
             combinationsArr = productVariables;
             productLabels = existing_data.columns.map(col => col);
+            uniqueLabels = productLabels;
         } else {
             combinationsArr = combinations(productVariables);
             productLabels = productVariables.map(el => el.label.toLowerCase());
@@ -592,6 +589,8 @@
                 }
             })
 
+            console.log('debug 0')
+
             document.querySelector('#submit-response').innerHTML += '<button value="Autogenerate" id="submit-prices" data-theme="a" class="ui-btn ui-btn-b ui-shadow ui-corner-all" id="btn-generate"><span>Submit Prices</button>';
             let varCount = 0;
             
@@ -611,6 +610,8 @@
                 // });
                 
             }, 0);
+
+            console.log('debug 1');
 
             document.querySelector('#btn-generate').addEventListener('click', e => {
                 e.preventDefault();
@@ -687,7 +688,7 @@
         // data.custom[currentElement].label = newLabel; 
 
         // Get all headers
-        const theaders = document.querySelectorAll('.th-title');
+        const theaders = document.querySelectorAll('.th-title, .th-subtitle');
 
         // Remove all table headers for rerender
         if(theaders.length != 0) {
@@ -712,18 +713,26 @@
             // Reversing and showing the labels as table header to be in order that they show up
             data.labels.map((label, i) => {
                 if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
-                    const th = document.createElement('th');
-                    th.className = 'th-title header-' + label.toLowerCase();
-                    th.setAttribute('data-header', label.toLowerCase());
-                    th.innerText = label.replace(/\-/g, ' ');
-                    const thead = document.querySelector('table thead tr');
-                    thead.insertBefore(th, thead.childNodes[1]);
+                    // const th = document.createElement('th');
+                    // th.className = 'th-title header-' + label.toLowerCase();
+                    // th.setAttribute('data-header', label.toLowerCase());
+                    // th.innerText = label.replace(/\-/g, ' ');
+                    // const thead = document.querySelector('table thead tr');
+                    // thead.insertBefore(th, thead.childNodes[1]);
+
+                    $(`<th class="th-title header-${label.toLowerCase()}" data-header="${labeltoLowerCase()}">${label.replace(/\-/g, ' ')}</th>`).insertBefore('thead #before')
+                    $(`<th class="th-subtitle"></th>`).insertBefore('#second-row-before');
+                    $(`<th class="th-subtitle"></th>`).insertBefore('#helper-row-before');
                 } 
+
+
             })
 
 
             // Create new array from current table header names
             let thTitles = Array.from(document.querySelectorAll('.th-title')).map(th => th.getAttribute('data-header'));
+
+            console.log(thTitles);
 
             // Create labels array copy with lowercase for comparing
             const labelsLower = data.labels.map(l => l.toLowerCase());
@@ -740,39 +749,47 @@
         // Change data
             removeHeaders();
 
-            function insertAfter(newNode, referenceNode) {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            }
-
-            
-
             if(data.productVariables.length > 0) {
                 const newDataProductVariables = [...data.productVariables];
                 // Reversing and showing the labels as table header to be in order that they show up
                 newDataProductVariables.reverse().map((label, i) => {
-                    console.log(label.label);
                     if(!document.querySelector(`.header-${label.unique.toLowerCase()}`)) {
-                        const th = document.createElement('th');
-                        th.className = 'th-title header-' + label.unique.toLowerCase();
-                        th.setAttribute('data-header', label.unique.toLowerCase());
-                        th.innerText = label.label.replace(/\-/g, ' ');
-                        const thead = document.querySelector('table thead tr');
-                        thead.insertBefore(th, thead.childNodes[1]);
-                    } 
+                        $(`<th class="th-title header-${label.unique.toLowerCase()}" data-header="${label.unique.toLowerCase()}">${label.label.replace(/\-/g, ' ')}</th>`).insertBefore('thead #before')
+                        $(`<th class="th-subtitle"></th>`).insertBefore('#second-row-before');
+                        $(`<th class="th-subtitle"></th>`).insertBefore('#helper-row-before');
+                    }
+
+                    // if(!document.querySelector(`.header-${label.unique.toLowerCase()}`)) {
+                    //     const th = document.createElement('th');
+                    //     th.className = 'th-title header-' + label.unique.toLowerCase();
+                    //     th.setAttribute('data-header', label.unique.toLowerCase());
+                    //     th.innerText = label.label.replace(/\-/g, ' ');
+                    //     const thead = document.querySelector('table thead tr');
+                    //     thead.insertBefore(th, thead.childNodes[1]);
+                    // } 
                 })         
             } else {
 
-                // TODO - Load custom option labels from existing data & site options
-                data.labels.reverse().map((label, i) => {
+                data.labels.reverse().map((label,i) => {
+                    console.log(label);
                     if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
-                        const th = document.createElement('th');
-                        th.className = 'th-title header-' + label.toLowerCase();
-                        th.setAttribute('data-header', label.toLowerCase());
-                        th.innerText = label.replace(/\-/g, ' ');
-                        const thead = document.querySelector('table thead tr');
-                        thead.insertBefore(th, thead.childNodes[1]);
-                    } 
+                        $(`<th class="th-title header-${label.toLowerCase()}" data-header="${label.toLowerCase()}">${label.replace(/\-/g, ' ')}</th>`).insertBefore('thead #before');
+                        $(`<th class="th-subtitle"></th>`).insertBefore('#second-row-before');
+                        $(`<th class="th-subtitle"></th>`).insertBefore('#helper-row-before');
+                    }
                 })
+
+                // TODO - Load custom option labels from existing data & site options
+                // data.labels.reverse().map((label, i) => {
+                //     if(!document.querySelector(`.header-${label.toLowerCase()}`)) {
+                //         const th = document.createElement('th');
+                //         th.className = 'th-title header-' + label.toLowerCase();
+                //         th.setAttribute('data-header', label.toLowerCase());
+                //         th.innerText = label.replace(/\-/g, ' ');
+                //         const thead = document.querySelector('table thead tr');
+                //         thead.insertBefore(th, thead.childNodes[1]);
+                //     } 
+                // })
             }
 
 
@@ -894,8 +911,6 @@
             // Add selectize tags to every iteration
             // Set timeout is waiting for element to initialize
             setTimeout(() => {
-                console.log(newOptions);
-
                 data.selectizeArr.push($(`input[name="${options[0]}"`).selectize({
                     delimiter: ',',
                     options: newOptions,
@@ -924,11 +939,10 @@
                 // data.productVariables = existing_data.
 
                 renderHeaders();
+                
                 // Passing true as parameters should we load already existing data
-
-
                 renderCombinations(combinationsArr, true);
-
+                console.log('passed this');
                 renderTags(combinationsArr, data.selectizeArr);
                 editableTags();
 
@@ -936,6 +950,7 @@
                     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
                     "iDisplayLength": 500,
                     "fixedHeader": true,
+                    "bSortCellsTop": true,
                     "columns": [
                         null,
                         ...data.labels.map(el => null),
@@ -1005,6 +1020,7 @@
                     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
                     "iDisplayLength": 500,
                     "fixedHeader": true,
+                    "bSortCellsTop": true
                 });
 
                 editableTags();
@@ -1065,6 +1081,7 @@
                     "lengthMenu": [[500, 1000, 2000, -1], [500, 1000, 2000, "Show all"]],
                     "iDisplayLength": 500,
                     "fixedHeader": true,
+                    "bSortCellsTop": true,
                     "columns": [
                         null,
                         ...data.labels.map(el => null),

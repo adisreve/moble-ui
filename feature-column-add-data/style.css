@@ -136,7 +136,33 @@
   }
 
   #apply-data {
-    margin-left:10px;
-    padding:0;
+    margin-left:0px;
+    padding:5px 10px;
     border: 0;
+    margin: 0;
+    margin-top: -12px;
+  }
+
+  th.apply-filters {
+    padding: 8px 10px;
+  }
+
+  table tr th.apply-filters input {
+    padding: 5px 0!important;
+  }
+
+  th.apply-filters input::placeholder {
+    padding-left:7px;
+  }
+
+  tr#second-row th {
+    border-bottom:0;
+  }
+
+  tr#helper-row th {
+    border-top: 0;
+  }
+
+  table.dataTable thead tr#helper-row th#helper-row-before, table.dataTable thead tr#second-row th {
+    padding: 8px 10px;
   }
