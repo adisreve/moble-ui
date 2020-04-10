@@ -112,7 +112,7 @@
 
         }
 
-        permutations([], 0);
+        permutations([], 0) ;
 
         let endTime = performance.now();
         let testCase = endTime - startTime;
@@ -362,7 +362,7 @@
             });
 
             setTimeout(() => {
-                const items = new Object();
+                let items = new Object();
                 const table = $('#tab_logic').dataTable().api();
 
                 const $select = $('input[name="search-filters"]').selectize({
@@ -396,6 +396,8 @@
                             items[column].push(tagName);
                         }
 
+                        console.log(items);
+
                         let curTags;
 
                         if(items[column].length > 1) {
@@ -424,9 +426,10 @@
                             console.log(curTags);
                         } else {
                             curTags = items[column][0];
+                            console.log(curTags);
                         }
 
-                        console.log(columnIndex)
+                        console.log(items)
 
                         table.columns(columnIndex).search('').draw();
                         // Search through table
@@ -437,11 +440,13 @@
 
                 $('#reset-search-filter').click(function() {
 
-                    table.columns().search('').draw();
-
                     const selectize = $select[0].selectize;
 
                     selectize.clear();
+                    table.columns().search('').draw();
+                    
+                    // Clear the object
+                    items = {};
                 })
             }, 0)
         }
@@ -493,12 +498,14 @@
             columnHeaders.forEach(col => {
 
                 if(columns[col].value !== '') {
-                    console.log(results[columns[col].column124])
+                    console.log(results[columns[col].column])
                     results[columns[col].column].forEach(r => {
                         const parsedHtml = parser.parseFromString(r, 'text/html');
                         const element = parsedHtml.querySelector('input');
 
                         const realHtml = document.querySelectorAll(`input[name="${element.name}"]`);
+
+                        console.log(realHtml);
 
                         realHtml.forEach(el => {
                             el.value = columns[col].value
